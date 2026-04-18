@@ -46,6 +46,23 @@ public class TransferApiClient {
         }
     }
 
+    public TransferExplanationResponse getTransferExplanation(DashboardSessionUser user, Long transferId) {
+        try {
+            return restClient.get()
+                    .uri("/api/transfers/{id}/explanation", transferId)
+                    .header(HttpHeaders.AUTHORIZATION, bearer(user))
+                    .retrieve()
+                    .body(TransferExplanationResponse.class);
+        } catch (RestClientResponseException ex) {
+            log.error("Transfer explanation call failed. transferId={}, status={}, body={}",
+                    transferId, ex.getStatusCode(), ex.getResponseBodyAsString(), ex);
+            return null;
+        } catch (Exception ex) {
+            log.error("Transfer explanation call failed. transferId={}", transferId, ex);
+            return null;
+        }
+    }
+
     private String bearer(DashboardSessionUser user) {
         return "Bearer " + user.getToken();
     }
@@ -74,5 +91,69 @@ public class TransferApiClient {
         private String failureReason;
         private LocalDateTime createdAt;
         private LocalDateTime completedAt;
+    }
+
+    @Getter
+    @Setter
+    public static class TransferExplanationResponse {
+        private Long transferId;
+        private String transferStatus;
+        private String complianceDecision;
+        private String complianceSummaryReason;
+        private List<TransferExplanationAuditEvent> auditEvents;
+        private TransferExplanationNarrative finalExplanation;
+        private TransferExplanationReviewMetadata reviewMetadata;
+        private TransferExplanationStateFlags stateFlags;
+        private Object auditProof;
+    }
+
+    @Getter
+    @Setter
+    public static class TransferExplanationAuditEvent {
+        private String ruleName;
+        private String decision;
+        private String reason;
+        private String legalContext;
+        private String internalPolicy;
+        private String userFacingExplanation;
+        private String metadataJson;
+        private String reviewedBy;
+        private String integrityHash;
+        private String onChainTxHash;
+        private Boolean onChainVerified;
+        private String proofSchemaVersion;
+        private String anchorNetwork;
+        private LocalDateTime anchoredAt;
+        private LocalDateTime createdAt;
+    }
+
+    @Getter
+    @Setter
+    public static class TransferExplanationNarrative {
+        private String userExplanation;
+        private String adminExplanation;
+    }
+
+    @Getter
+    @Setter
+    public static class TransferExplanationReviewMetadata {
+        private boolean reviewed;
+        private String reviewDecision;
+        private String reviewedBy;
+        private LocalDateTime reviewedAt;
+        private String reviewComment;
+    }
+
+    @Getter
+    @Setter
+    public static class TransferExplanationStateFlags {
+        private boolean fundsMoved;
+        private boolean reviewable;
+        private boolean blocked;
+        private boolean approved;
+        private boolean rejected;
+        private boolean auditAnchoredOnChain;
+        private boolean auditAnchorVerified;
+        private List<String> onChainTxHashes;
     }
 }

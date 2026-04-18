@@ -16,22 +16,20 @@
                 Dashboard
             </a>
 
-            <span class="sidebar-nav-disabled">
+            <a th:href="@{/transfers}" th:classappend="${active == 'transfers'} ? ' active' : ''">
                 Transfers
-                <span class="soon-badge">Soon</span>
-            </span>
+            </a>
 
             <span class="sidebar-nav-disabled">
-                Review Queue
-                <span class="soon-badge">Soon</span>
-            </span>
+        Review Queue
+        <span class="soon-badge">Soon</span>
+    </span>
 
             <span class="sidebar-nav-disabled">
-                Policies
-                <span class="soon-badge">Soon</span>
-            </span>
+        Policies
+        <span class="soon-badge">Soon</span>
+    </span>
         </nav>
-
         <div class="sidebar-footer">
             <div class="small-label">Signed in as</div>
             <div class="user-email" th:text="${currentUserEmail}">admin@compliflow.local</div>

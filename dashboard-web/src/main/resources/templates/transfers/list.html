@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle} + ' | CompliFlow'">Transfers | CompliFlow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar('transfers')}"></div>
+
+    <main class="app-main">
+        <div th:replace="~{fragments/topbar :: topbar(${pageTitle}, ${pageSubtitle})}"></div>
+
+        <section class="content-section">
+            <section class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>Transfer list</h2>
+                        <p>Operational overview of all transfers processed by CompliFlow.</p>
+                    </div>
+                </div>
+
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table align-middle dashboard-table mb-0">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th class="text-end">Amount</th>
+                                <th>Status</th>
+                                <th>Decision</th>
+                                <th>Created</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="transfer : ${transfers}">
+                                <td class="mono fw-semibold" th:text="${transfer.id}">10</td>
+                                <td class="mono" th:text="${transfer.fromAccount}">PL00...</td>
+                                <td class="mono" th:text="${transfer.toAccount != null ? transfer.toAccount : transfer.targetWalletAddress}">PL00...</td>
+                                <td class="text-end">
+                                    <span th:text="${transfer.amount}">500.00</span>
+                                    <span th:text="${transfer.currency}">PLN</span>
+                                </td>
+                                <td>
+                                    <span class="status-badge"
+                                          th:classappend="' status-' + ${#strings.toLowerCase(transfer.status)}"
+                                          th:text="${transfer.status}">COMPLETED</span>
+                                </td>
+                                <td>
+                                    <span class="status-badge"
+                                          th:classappend="' decision-' + ${#strings.toLowerCase(transfer.complianceDecision)}"
+                                          th:text="${transfer.complianceDecision}">PASS</span>
+                                </td>
+                                <td class="mono" th:text="${transfer.createdAt}">2026-04-18T15:03:05</td>
+                                <td class="text-end">
+                                    <a th:href="@{'/transfers/' + ${transfer.id}}" class="btn btn-sm btn-outline-secondary">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+
+                            <tr th:if="${#lists.isEmpty(transfers)}">
+                                <td colspan="8" class="text-center text-muted py-4">
+                                    No transfers available.
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+</div>
+</body>
+</html>
