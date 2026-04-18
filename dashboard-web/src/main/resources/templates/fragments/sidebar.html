@@ -12,10 +12,24 @@
         </div>
 
         <nav class="sidebar-nav">
-            <a th:href="@{/dashboard}" th:classappend="${active == 'dashboard'} ? ' active' : ''">Dashboard</a>
-            <a th:href="@{/transfers}" th:classappend="${active == 'transfers'} ? ' active' : ''">Transfers</a>
-            <a th:href="@{/review-queue}" th:classappend="${active == 'review'} ? ' active' : ''">Review Queue</a>
-            <a th:href="@{/policies}" th:classappend="${active == 'policies'} ? ' active' : ''">Policies</a>
+            <a th:href="@{/dashboard}" th:classappend="${active == 'dashboard'} ? ' active' : ''">
+                Dashboard
+            </a>
+
+            <span class="sidebar-nav-disabled">
+                Transfers
+                <span class="soon-badge">Soon</span>
+            </span>
+
+            <span class="sidebar-nav-disabled">
+                Review Queue
+                <span class="soon-badge">Soon</span>
+            </span>
+
+            <span class="sidebar-nav-disabled">
+                Policies
+                <span class="soon-badge">Soon</span>
+            </span>
         </nav>
 
         <div class="sidebar-footer">

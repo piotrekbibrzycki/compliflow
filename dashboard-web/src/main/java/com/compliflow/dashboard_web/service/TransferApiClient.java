@@ -4,16 +4,19 @@ import com.compliflow.dashboard_web.config.DashboardApiProperties;
 import com.compliflow.dashboard_web.session.DashboardSessionUser;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
+@Slf4j
 public class TransferApiClient {
 
     private final RestClient restClient;
@@ -24,81 +27,52 @@ public class TransferApiClient {
                 .build();
     }
 
-    public DashboardSummaryResponse getDashboardSummary(DashboardSessionUser user) {
-        return restClient.get()
-                .uri("/api/dashboard/summary")
-                .header(HttpHeaders.AUTHORIZATION, bearer(user))
-                .retrieve()
-                .body(DashboardSummaryResponse.class);
-    }
+    public List<TransferSummaryItem> getTransfers(DashboardSessionUser user) {
+        try {
+            TransferListResponse response = restClient.get()
+                    .uri("/api/transfers")
+                    .header(HttpHeaders.AUTHORIZATION, bearer(user))
+                    .retrieve()
+                    .body(TransferListResponse.class);
 
-    public List<DashboardActivityItem> getDashboardActivity(DashboardSessionUser user) {
-        ActivityListResponse response = restClient.get()
-                .uri("/api/dashboard/activity")
-                .header(HttpHeaders.AUTHORIZATION, bearer(user))
-                .retrieve()
-                .body(ActivityListResponse.class);
-
-        return response == null ? List.of() : response;
-    }
-
-    public ComplianceSummaryReport getComplianceSummaryReport(DashboardSessionUser user) {
-        return restClient.get()
-                .uri("/api/reports/compliance-summary")
-                .header(HttpHeaders.AUTHORIZATION, bearer(user))
-                .retrieve()
-                .body(ComplianceSummaryReport.class);
+            return response == null ? List.of() : response;
+        } catch (RestClientResponseException ex) {
+            log.error("Transfers call failed. status={}, body={}",
+                    ex.getStatusCode(), ex.getResponseBodyAsString(), ex);
+            return List.of();
+        } catch (Exception ex) {
+            log.error("Transfers call failed.", ex);
+            return List.of();
+        }
     }
 
     private String bearer(DashboardSessionUser user) {
         return "Bearer " + user.getToken();
     }
 
-    public static class ActivityListResponse extends ArrayList<DashboardActivityItem> {
+    public static class TransferListResponse extends ArrayList<TransferSummaryItem> {
     }
 
     @Getter
     @Setter
-    public static class DashboardSummaryResponse {
-        private long totalTransfers;
-        private long completedTransfers;
-        private long pendingReviewTransfers;
-        private long blockedTransfers;
-        private long rejectedTransfers;
-        private long failedTransfers;
-        private long flaggedTransfers;
-        private long anchoredProofTransfers;
-        private long walletRelatedTransfers;
-    }
-
-    @Getter
-    @Setter
-    public static class DashboardActivityItem {
-        private String activityType;
+    public static class TransferSummaryItem {
+        private Long id;
+        private String fromAccount;
+        private String toAccount;
+        private String targetWalletAddress;
+        private BigDecimal amount;
         private String title;
-        private String description;
-        private Long transferId;
-        private String severity;
+        private String currency;
+        private String status;
+        private String complianceDecision;
+        private String complianceReasonSummary;
+        private String paymentRail;
+        private String counterpartyType;
+        private String reviewComment;
+        private String reviewedBy;
+        private LocalDateTime reviewedAt;
+        private String failureReason;
         private LocalDateTime createdAt;
-    }
-
-    @Getter
-    @Setter
-    public static class ComplianceSummaryReport {
-        private Map<String, Long> decisionBreakdown;
-        private Map<String, Long> statusBreakdown;
-        private long totalAuditEvents;
-        private long totalAnchoredProofs;
-        private List<ComplianceSummaryPolicyMetric> topPolicyHits;
-    }
-
-    @Getter
-    @Setter
-    public static class ComplianceSummaryPolicyMetric {
-        private String policyCode;
-        private String policyVersion;
-        private String scenarioCode;
-        private String decision;
-        private long hitCount;
+        private LocalDateTime completedAt;
     }
 }

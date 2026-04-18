@@ -13,7 +13,7 @@
 
     <main class="app-main">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle}, ${pageSubtitle})}"></div>
-
+        <div th:if="${dashboardError}" class="alert alert-warning mb-4" th:text="${dashboardError}"></div>
         <section class="content-section">
             <div class="row g-3 mb-4">
                 <div class="col-md-6 col-xl-3">
