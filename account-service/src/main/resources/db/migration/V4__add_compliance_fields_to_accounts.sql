@@ -1,0 +1,5 @@
+ALTER TABLE accounts
+    ADD COLUMN risk_score INTEGER NOT NULL DEFAULT 0,
+    ADD COLUMN anonymized BOOLEAN NOT NULL DEFAULT FALSE,
+    ADD COLUMN anonymized_at TIMESTAMP,
+    ADD COLUMN wallet_address VARCHAR(128);

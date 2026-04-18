@@ -1,0 +1,235 @@
+### ============================================
+### CompliFlow Legal - BATCH 1 foundation check
+### IntelliJ HTTP Client
+### ============================================
+
+@accountHost = http://localhost:8081
+@transferHost = http://localhost:8082
+
+@adminEmail = admin@compliflow.local
+@adminPassword = secret123
+
+# Możesz zostawić {{$timestamp}}, żeby numery kont były unikalne
+@runId = {{$timestamp}}
+
+@senderAccount = TEST-{{runId}}-001
+@receiverAccount = TEST-{{runId}}-002
+
+### 1) HEALTHCHECK ACCOUNT SERVICE
+GET {{accountHost}}/actuator/health
+
+> {%
+    client.test("Account service health = 200", function() {
+        client.assert(response.status === 200, "Expected HTTP 200");
+    });
+%}
+
+###
+
+### 2) HEALTHCHECK TRANSFER SERVICE
+GET {{transferHost}}/actuator/health
+
+> {%
+    client.test("Transfer service health = 200", function() {
+        client.assert(response.status === 200, "Expected HTTP 200");
+    });
+%}
+
+###
+
+### 3) LOGIN AS ADMIN
+POST {{accountHost}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "password": "{{adminPassword}}"
+}
+
+> {%
+    client.test("Admin login = 200", function() {
+        client.assert(response.status === 200, "Expected HTTP 200");
+    });
+
+    client.test("Login returned JWT token", function() {
+        client.assert(response.body.token != null, "Token is missing");
+        client.assert(response.body.token.length > 20, "Token looks too short");
+    });
+
+    client.global.set("admin_token", response.body.token);
+%}
+
+###
+
+### 4) CREATE SENDER ACCOUNT
+POST {{accountHost}}/api/accounts
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "accountNumber": "TEST-B1-SENDER-{{$timestamp}}",
+  "ownerName": "Sender Test",
+  "balance": 500.00,
+  "currency": "PLN"
+}
+
+> {%
+    client.test("Create sender account = 201", function() {
+        client.assert(response.status === 201, "Expected HTTP 201");
+    });
+
+    client.test("Sender account contains new BATCH 1 fields", function() {
+        client.assert(response.body.accountNumber != null, "Missing accountNumber");
+        client.assert(response.body.ownerName === "Sender Test", "Wrong ownerName");
+        client.assert(Number(response.body.balance) === 500, "Wrong balance");
+        client.assert(response.body.currency === "PLN", "Wrong currency");
+
+        client.assert(response.body.riskScore === 0, "riskScore should default to 0");
+        client.assert(response.body.anonymized === false, "anonymized should default to false");
+        client.assert(response.body.anonymizedAt == null, "anonymizedAt should be null");
+        client.assert(response.body.walletAddress == null, "walletAddress should be null");
+    });
+
+    client.global.set("sender_account_id", response.body.id);
+    client.global.set("sender_account_number", response.body.accountNumber);
+%}
+###
+### 5) CREATE RECEIVER ACCOUNT
+POST {{accountHost}}/api/accounts
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "accountNumber": "TEST-B1-RECEIVER-{{$timestamp}}",
+  "ownerName": "Receiver Test",
+  "balance": 300.00,
+  "currency": "PLN"
+}
+
+> {%
+    client.test("Create receiver account = 201", function() {
+        client.assert(response.status === 201, "Expected HTTP 201");
+    });
+
+    client.test("Receiver account contains new BATCH 1 fields", function() {
+        client.assert(response.body.accountNumber != null, "Missing accountNumber");
+        client.assert(response.body.ownerName === "Receiver Test", "Wrong ownerName");
+        client.assert(Number(response.body.balance) === 300, "Wrong balance");
+        client.assert(response.body.currency === "PLN", "Wrong currency");
+
+        client.assert(response.body.riskScore === 0, "riskScore should default to 0");
+        client.assert(response.body.anonymized === false, "anonymized should default to false");
+        client.assert(response.body.anonymizedAt == null, "anonymizedAt should be null");
+        client.assert(response.body.walletAddress == null, "walletAddress should be null");
+    });
+
+    client.global.set("receiver_account_id", response.body.id);
+    client.global.set("receiver_account_number", response.body.accountNumber);
+%}
+### 6) GET SENDER ACCOUNT BY NUMBER
+GET {{accountHost}}/api/accounts/number/{{sender_account_number}}
+Authorization: Bearer {{admin_token}}
+
+> {%
+    client.test("Get sender account by number = 200", function() {
+        client.assert(response.status === 200, "Expected HTTP 200");
+    });
+
+    client.test("Sender account fields are persisted correctly", function() {
+        client.assert(response.body.accountNumber === client.global.get("sender_account_number"), "Wrong accountNumber");
+        client.assert(response.body.ownerName === "Sender Test", "Wrong ownerName");
+        client.assert(Number(response.body.balance) === 500, "Wrong balance");
+        client.assert(response.body.currency === "PLN", "Wrong currency");
+
+        client.assert(response.body.riskScore === 0, "riskScore should still be 0");
+        client.assert(response.body.anonymized === false, "anonymized should still be false");
+        client.assert(response.body.anonymizedAt == null, "anonymizedAt should still be null");
+        client.assert(response.body.walletAddress == null, "walletAddress should still be null");
+    });
+%}
+
+### 7) GET RECEIVER ACCOUNT BY NUMBER
+GET {{accountHost}}/api/accounts/number/{{receiver_account_number}}
+Authorization: Bearer {{admin_token}}
+
+> {%
+    client.test("Get receiver account by number = 200", function() {
+        client.assert(response.status === 200, "Expected HTTP 200");
+    });
+
+    client.test("Receiver account fields are persisted correctly", function() {
+        client.assert(response.body.accountNumber === client.global.get("receiver_account_number"), "Wrong accountNumber");
+        client.assert(response.body.ownerName === "Receiver Test", "Wrong ownerName");
+        client.assert(Number(response.body.balance) === 300, "Wrong balance");
+        client.assert(response.body.currency === "PLN", "Wrong currency");
+
+        client.assert(response.body.riskScore === 0, "riskScore should still be 0");
+        client.assert(response.body.anonymized === false, "anonymized should still be false");
+        client.assert(response.body.anonymizedAt == null, "anonymizedAt should still be null");
+        client.assert(response.body.walletAddress == null, "walletAddress should still be null");
+    });
+%}
+}
+
+### 8) CREATE STANDARD TRANSFER (old flow should still work)
+POST {{transferHost}}/api/transfers
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "fromAccount": "{{sender_account_number}}",
+  "toAccount": "{{receiver_account_number}}",
+  "amount": 100.00,
+  "title": "Batch 1 standard transfer",
+  "currency": "PLN"
+}
+
+> {%
+    client.test("Create transfer = 201", function() {
+        client.assert(response.status === 201, "Expected HTTP 201");
+    });
+
+    client.test("Old transfer flow still completes", function() {
+        client.assert(response.body.status === "COMPLETED", "Transfer should still be COMPLETED in BATCH 1");
+    });
+
+    client.test("New transfer fields have safe defaults", function() {
+        client.assert(response.body.complianceDecision === "PASS", "Default complianceDecision should be PASS");
+        client.assert(response.body.complianceReasonSummary == null, "complianceReasonSummary should be null");
+        client.assert(response.body.paymentRail === "SEPA", "Default paymentRail should be SEPA");
+        client.assert(response.body.counterpartyType === "BANK_ACCOUNT", "Default counterpartyType should be BANK_ACCOUNT");
+        client.assert(response.body.reviewComment == null, "reviewComment should be null");
+        client.assert(response.body.reviewedBy == null, "reviewedBy should be null");
+        client.assert(response.body.reviewedAt == null, "reviewedAt should be null");
+        client.assert(response.body.targetWalletAddress == null, "targetWalletAddress should be null");
+    });
+
+    client.global.set("transfer_id", response.body.id);
+%}
+
+### 9) GET TRANSFER BY ID
+GET {{transferHost}}/api/transfers/{{transfer_id}}
+Authorization: Bearer {{admin_token}}
+
+### 10) VERIFY BALANCES AFTER TRANSFER - SENDER
+GET {{accountHost}}/api/accounts/number/{{sender_account_number}}
+Authorization: Bearer {{admin_token}}
+
+### 11) VERIFY BALANCES AFTER TRANSFER - RECEIVER
+GET {{accountHost}}/api/accounts/number/{{receiver_account_number}}
+Authorization: Bearer {{admin_token}}
+
+### 12) CREATE TRANSFER WITH EXPLICIT NEW FIELDS
+POST {{transferHost}}/api/transfers
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "fromAccount": "{{sender_account_number}}",
+  "toAccount": "{{receiver_account_number}}",
+  "amount": 50.00,
+  "title": "Batch 1 explicit fields transfer",
+  "currency": "PLN",
+  "paymentRail": "SEPA",
+  "counterpartyType": "BANK_ACCOUNT"
+}

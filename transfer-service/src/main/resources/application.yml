@@ -1,0 +1,40 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: transfer-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5434/transfers
+    username: user
+    password: passwd
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+
+account-service:
+  url: http://localhost:8081
+
+jwt:
+  secret: c3VwZXJzZWNyZXRrZXlmb3Jqd3RzaG91bGRiZWF0bGVhc3QzMmJ5dGVzbG9uZw==
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{correlationId}] %logger{36} - %msg%n"

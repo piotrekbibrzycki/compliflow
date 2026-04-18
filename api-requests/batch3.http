@@ -1,0 +1,102 @@
+@accountHost = http://localhost:8081
+@transferHost = http://localhost:8082
+
+@adminEmail = admin@compliflow.local
+@adminPassword = secret123
+
+### LOGIN
+POST {{accountHost}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "password": "{{adminPassword}}"
+}
+
+> {%
+    client.global.set("admin_token", response.body.token);
+%}
+
+###
+
+### CREATE SOURCE ACCOUNT
+POST {{accountHost}}/api/accounts
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "accountNumber": "SRC-B3-{{$timestamp}}",
+  "ownerName": "Source Test",
+  "balance": 50000.00,
+  "currency": "PLN"
+}
+
+> {%
+    client.global.set("src_account", response.body.accountNumber);
+%}
+
+###
+
+### CREATE DEST ACCOUNT
+POST {{accountHost}}/api/accounts
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "accountNumber": "DST-B3-{{$timestamp}}",
+  "ownerName": "Destination Test",
+  "balance": 1000.00,
+  "currency": "PLN"
+}
+
+> {%
+    client.global.set("dst_account", response.body.accountNumber);
+%}
+
+###
+
+### PASS CASE
+POST {{transferHost}}/api/transfers
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "fromAccount": "{{src_account}}",
+  "toAccount": "{{dst_account}}",
+  "amount": 100.00,
+  "title": "Safe transfer",
+  "currency": "PLN"
+}
+
+> {%
+    client.test("PASS should complete", function() {
+        client.assert(response.status === 201, "Expected 201");
+        client.assert(response.body.status === "COMPLETED", "Expected COMPLETED");
+        client.assert(response.body.complianceDecision === "PASS", "Expected PASS");
+    });
+    client.global.set("pass_transfer_id", response.body.id);
+%}
+
+###
+
+### FLAG CASE
+POST {{transferHost}}/api/transfers
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "fromAccount": "{{src_account}}",
+  "toAccount": "{{dst_account}}",
+  "amount": 20000.00,
+  "title": "High amount transfer",
+  "currency": "PLN"
+}
+
+> {%
+    client.test("FLAG should go to review", function() {
+        client.assert(response.status === 201, "Expected 201");
+        client.assert(response.body.status === "PENDING_REVIEW", "Expected PENDING_REVIEW");
+        client.assert(response.body.complianceDecision === "FLAG", "Expected FLAG");
+    });
+    client.global.set("flag_transfer_id", response.body.id);
+%}
