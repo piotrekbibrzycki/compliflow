@@ -6,7 +6,9 @@ import com.compliflow.transfer_service.model.ReviewDecision;
 import com.compliflow.transfer_service.model.Transfer;
 import com.compliflow.transfer_service.repository.AuditEventRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -46,6 +48,9 @@ public class AuditEventService {
                         .integrityHash(null)
                         .onChainTxHash(null)
                         .onChainVerified(false)
+                        .proofSchemaVersion(null)
+                        .anchorNetwork(null)
+                        .anchoredAt(null)
                         .build())
                 .toList();
 
@@ -80,9 +85,40 @@ public class AuditEventService {
                 .integrityHash(null)
                 .onChainTxHash(null)
                 .onChainVerified(false)
+                .proofSchemaVersion(null)
+                .anchorNetwork(null)
+                .anchoredAt(null)
                 .build();
 
         auditEventRepository.save(event);
+    }
+
+    @Transactional
+    public void attachBlockchainProofToTransferEvents(
+            Long transferId,
+            String integrityHash,
+            String onChainTxHash,
+            boolean onChainVerified,
+            String proofSchemaVersion,
+            String anchorNetwork,
+            LocalDateTime anchoredAt
+    ) {
+        List<AuditEvent> auditEvents = auditEventRepository.findByTransferIdOrderByCreatedAtAsc(transferId);
+
+        if (auditEvents.isEmpty()) {
+            throw new IllegalArgumentException("No audit events found for transfer: " + transferId);
+        }
+
+        auditEvents.forEach(event -> {
+            event.setIntegrityHash(integrityHash);
+            event.setOnChainTxHash(onChainTxHash);
+            event.setOnChainVerified(onChainVerified);
+            event.setProofSchemaVersion(proofSchemaVersion);
+            event.setAnchorNetwork(anchorNetwork);
+            event.setAnchoredAt(anchoredAt);
+        });
+
+        auditEventRepository.saveAll(auditEvents);
     }
 
     private String safeJson(String value) {

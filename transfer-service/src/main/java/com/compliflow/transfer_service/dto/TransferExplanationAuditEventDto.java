@@ -24,6 +24,9 @@ public class TransferExplanationAuditEventDto {
     private String integrityHash;
     private String onChainTxHash;
     private Boolean onChainVerified;
+    private String proofSchemaVersion;
+    private String anchorNetwork;
+    private LocalDateTime anchoredAt;
     private LocalDateTime createdAt;
 
     public static TransferExplanationAuditEventDto fromEntity(AuditEvent auditEvent) {
@@ -39,6 +42,9 @@ public class TransferExplanationAuditEventDto {
                 .integrityHash(auditEvent.getIntegrityHash())
                 .onChainTxHash(auditEvent.getOnChainTxHash())
                 .onChainVerified(auditEvent.getOnChainVerified())
+                .proofSchemaVersion(auditEvent.getProofSchemaVersion())
+                .anchorNetwork(auditEvent.getAnchorNetwork())
+                .anchoredAt(auditEvent.getAnchoredAt())
                 .createdAt(auditEvent.getCreatedAt())
                 .build();
     }

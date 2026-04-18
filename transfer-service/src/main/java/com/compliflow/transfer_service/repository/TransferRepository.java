@@ -1,5 +1,7 @@
 package com.compliflow.transfer_service.repository;
 
+import com.compliflow.transfer_service.model.ComplianceDecision;
+import com.compliflow.transfer_service.model.CounterpartyType;
 import com.compliflow.transfer_service.model.Transfer;
 import com.compliflow.transfer_service.model.TransferStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,5 +17,13 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
     List<Transfer> findAllByOrderByCreatedAtDesc();
 
     List<Transfer> findByStatusOrderByCreatedAtDesc(TransferStatus status);
+
+    long countByStatus(TransferStatus status);
+
+    long countByComplianceDecision(ComplianceDecision complianceDecision);
+
+    long countByCounterpartyType(CounterpartyType counterpartyType);
+
+    List<Transfer> findTop20ByOrderByCreatedAtDesc();
 
 }

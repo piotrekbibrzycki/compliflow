@@ -70,6 +70,14 @@ public class AuditEvent {
 
     private Boolean onChainVerified;
 
+    @Column(length = 64)
+    private String proofSchemaVersion;
+
+    @Column(length = 64)
+    private String anchorNetwork;
+
+    private LocalDateTime anchoredAt;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

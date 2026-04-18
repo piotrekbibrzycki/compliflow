@@ -19,11 +19,14 @@ public class TransferExplanationService {
 
     private final TransferRepository transferRepository;
     private final AuditEventRepository auditEventRepository;
+    private final TransferAuditProofService transferAuditProofService;
 
     public TransferExplanationService(TransferRepository transferRepository,
-                                      AuditEventRepository auditEventRepository) {
+                                      AuditEventRepository auditEventRepository,
+                                      TransferAuditProofService transferAuditProofService) {
         this.transferRepository = transferRepository;
         this.auditEventRepository = auditEventRepository;
+        this.transferAuditProofService = transferAuditProofService;
     }
 
     public TransferExplanationResponseDto getTransferExplanation(Long transferId) {
@@ -46,6 +49,7 @@ public class TransferExplanationService {
                 .finalExplanation(buildNarrative(transfer, auditEvents, reviewMetadata, stateFlags))
                 .reviewMetadata(reviewMetadata)
                 .stateFlags(stateFlags)
+                .auditProof(transferAuditProofService.buildProofResponse(transfer, auditEvents))
                 .build();
     }
 

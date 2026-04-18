@@ -38,3 +38,14 @@ management:
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level [%X{correlationId}] %logger{36} - %msg%n"
+
+
+blockchain:
+  enabled: ${BLOCKCHAIN_ENABLED:false}
+  rpc-url: ${BLOCKCHAIN_RPC_URL:http://localhost:8545}
+  private-key: ${BLOCKCHAIN_PRIVATE_KEY:}
+  contract-address: ${BLOCKCHAIN_CONTRACT_ADDRESS:}
+  network: ${BLOCKCHAIN_NETWORK:sepolia}
+  chain-id: ${BLOCKCHAIN_CHAIN_ID:11155111}
+  gas-price-wei: ${BLOCKCHAIN_GAS_PRICE_WEI:20000000000}
+  gas-limit: ${BLOCKCHAIN_GAS_LIMIT:300000}

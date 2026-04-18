@@ -21,4 +21,5 @@ public class TransferExplanationResponseDto {
     private TransferExplanationNarrativeDto finalExplanation;
     private TransferExplanationReviewMetadataDto reviewMetadata;
     private TransferExplanationStateFlagsDto stateFlags;
+    private TransferAuditProofResponseDto auditProof;
 }
