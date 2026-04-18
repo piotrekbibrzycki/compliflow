@@ -1,0 +1,10 @@
+target/
+.idea/
+*.iml
+.DS_Store
+.env
+venv/
+transfer.txt
+account.txt
+log/
+*.log

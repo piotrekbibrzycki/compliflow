@@ -1,0 +1,64 @@
+services:
+  account-db:
+    image: postgres:15-alpine
+    container_name: account-db
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: accounts
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: passwd
+    volumes:
+      - account-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d accounts"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  transfer-db:
+    image: postgres:15-alpine
+    container_name: transfer-db
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: transfers
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: passwd
+    volumes:
+      - transfer-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d transfers"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  account-service:
+    build:
+      context: ./account-service
+    container_name: account-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      account-db:
+        condition: service_healthy
+
+  transfer-service:
+    build:
+      context: ./transfer-service
+    container_name: transfer-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      transfer-db:
+        condition: service_healthy
+      account-service:
+        condition: service_started
+
+volumes:
+  account-data:
+  transfer-data:
