@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle} + ' | CompliFlow'">Dashboard | CompliFlow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></div>
+
+    <main class="app-main">
+        <div th:replace="~{fragments/topbar :: topbar(${pageTitle}, ${pageSubtitle})}"></div>
+
+        <section class="content-section">
+            <div class="row g-3 mb-4">
+                <div class="col-md-6 col-xl-3">
+                    <div class="metric-card">
+                        <div class="metric-label">Total Transfers</div>
+                        <div class="metric-value" th:text="${summary.totalTransfers}">0</div>
+                        <div class="metric-subtext">All recorded transfers</div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <div class="metric-card">
+                        <div class="metric-label">Pending Review</div>
+                        <div class="metric-value" th:text="${summary.pendingReviewTransfers}">0</div>
+                        <div class="metric-subtext">Transfers awaiting manual decision</div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <div class="metric-card">
+                        <div class="metric-label">Blocked</div>
+                        <div class="metric-value" th:text="${summary.blockedTransfers}">0</div>
+                        <div class="metric-subtext">Compliance-blocked transfers</div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <div class="metric-card">
+                        <div class="metric-label">Anchored Proofs</div>
+                        <div class="metric-value" th:text="${summary.anchoredProofTransfers}">0</div>
+                        <div class="metric-subtext">Transfers with on-chain audit proof</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-xl-7">
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <h2>Recent activity</h2>
+                                <p>Most recent compliance and transfer events across the system.</p>
+                            </div>
+                        </div>
+
+                        <div class="panel-body">
+                            <div class="activity-list">
+                                <div class="activity-item" th:each="item : ${activity}">
+                                    <div class="activity-dot" th:classappend="' severity-' + ${item.severity}"></div>
+
+                                    <div class="activity-content">
+                                        <div class="activity-title-row">
+                                            <div class="activity-title" th:text="${item.title}">Transfer blocked</div>
+                                            <div class="activity-time mono" th:text="${item.createdAt}">2026-04-18T12:00</div>
+                                        </div>
+
+                                        <div class="activity-description" th:text="${item.description}">
+                                            Transfer 42 was blocked by compliance.
+                                        </div>
+
+                                        <div class="activity-meta mono" th:if="${item.transferId != null}">
+                                            Transfer ID: <span th:text="${item.transferId}">42</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div th:if="${#lists.isEmpty(activity)}" class="text-muted">
+                                    No recent activity available.
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="col-xl-5">
+                    <section class="panel mb-4">
+                        <div class="panel-header">
+                            <div>
+                                <h2>Compliance status breakdown</h2>
+                                <p>Current transfer distribution by workflow status.</p>
+                            </div>
+                        </div>
+
+                        <div class="panel-body">
+                            <table class="table table-sm align-middle dashboard-table mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th class="text-end">Count</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="entry : ${report.statusBreakdown}">
+                                    <td class="mono" th:text="${entry.key}">COMPLETED</td>
+                                    <td class="text-end" th:text="${entry.value}">0</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <h2>Top policy hits</h2>
+                                <p>Most frequently matched compliance policy rows.</p>
+                            </div>
+                        </div>
+
+                        <div class="panel-body">
+                            <table class="table table-sm align-middle dashboard-table mb-0">
+                                <thead>
+                                <tr>
+                                    <th>Policy</th>
+                                    <th>Scenario</th>
+                                    <th class="text-end">Hits</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="metric : ${report.topPolicyHits}">
+                                    <td>
+                                        <div class="mono fw-semibold" th:text="${metric.policyCode}">AML-RISK-HIGH-SOURCE-ACCOUNT</div>
+                                        <div class="small text-muted" th:text="${metric.policyVersion}">1.0</div>
+                                    </td>
+                                    <td class="mono" th:text="${metric.scenarioCode}">HIGH_RISK_ACCOUNT</td>
+                                    <td class="text-end" th:text="${metric.hitCount}">0</td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            <div th:if="${#lists.isEmpty(report.topPolicyHits)}" class="text-muted mt-2">
+                                No policy activity available.
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

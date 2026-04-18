@@ -1,0 +1,13 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: dashboard-web
+  thymeleaf:
+    cache: false
+
+dashboard:
+  api:
+    account-service-url: http://account-service:8081
+    transfer-service-url: http://transfer-service:8082

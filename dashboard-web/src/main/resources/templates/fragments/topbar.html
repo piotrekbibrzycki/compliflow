@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="topbar(title, subtitle)">
+  <header class="app-topbar">
+    <div>
+      <h1 class="page-title" th:text="${title}">Dashboard</h1>
+      <p class="page-subtitle" th:text="${subtitle}">Compliance operations overview</p>
+    </div>
+
+    <div class="topbar-badge">Demo Environment</div>
+  </header>
+</div>
+</body>
+</html>

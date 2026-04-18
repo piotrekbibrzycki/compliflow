@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="sidebar(active)">
+    <aside class="app-sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-mark">CF</div>
+            <div>
+                <div class="brand-title">CompliFlow</div>
+                <div class="brand-subtitle">Operations Console</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a th:href="@{/dashboard}" th:classappend="${active == 'dashboard'} ? ' active' : ''">Dashboard</a>
+            <a th:href="@{/transfers}" th:classappend="${active == 'transfers'} ? ' active' : ''">Transfers</a>
+            <a th:href="@{/review-queue}" th:classappend="${active == 'review'} ? ' active' : ''">Review Queue</a>
+            <a th:href="@{/policies}" th:classappend="${active == 'policies'} ? ' active' : ''">Policies</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="small-label">Signed in as</div>
+            <div class="user-email" th:text="${currentUserEmail}">admin@compliflow.local</div>
+
+            <form th:action="@{/logout}" method="post" class="mt-3">
+                <button type="submit" class="btn btn-outline-secondary btn-sm w-100">Sign out</button>
+            </form>
+        </div>
+    </aside>
+</div>
+</body>
+</html>
