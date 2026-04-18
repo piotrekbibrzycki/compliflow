@@ -13,5 +13,6 @@
     <modules>
         <module>account-service</module>
         <module>transfer-service</module>
+        <module>dashboard-web</module>
     </modules>
 </project>

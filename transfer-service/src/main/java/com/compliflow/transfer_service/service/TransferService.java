@@ -227,7 +227,7 @@ public class TransferService {
             transfer = transferRepository.save(transfer);
 
             auditEventService.saveAdminReviewDecision(transfer, ReviewDecision.APPROVE, reviewedBy, comment);
-            throw new IllegalStateException("Failed to debit source account during review approval");
+            return TransferResponseDto.toDto(transfer);
         }
 
         boolean creditSuccess = accountServiceClient.adjustBalance(toId, transfer.getAmount());
