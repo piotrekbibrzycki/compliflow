@@ -1,2 +1,16 @@
-POST http://127.0.0.1:8082/api/transfers/10/proof/anchor
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBjb21wbGlmbG93LmxvY2FsIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc2NTM0OTk2LCJleHAiOjE3NzY1Mzg1OTZ9.rymDu1HA33-WCJdOslbSdDR2ZdpR88RWpaXL_qThIMY
+@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBjb21wbGlmbG93LmxvY2FsIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc2NTQ5ODI3LCJleHAiOjE3NzY1NTM0Mjd9.RvCL5YG6UrNFmJHXVKa_NpDSpZvwVfTwTIRqaG-C0C8
+
+###
+POST http://127.0.0.1:8082/api/transfers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "fromAccount": "PL001DEMO0000000000000000000001",
+  "toAccount": "PL001DEMO0000000000000000000003",
+  "amount": 700.00,
+  "title": "Demo blocked transfer",
+  "currency": "PLN",
+  "paymentRail": "SEPA",
+  "counterpartyType": "BANK_ACCOUNT"
+}

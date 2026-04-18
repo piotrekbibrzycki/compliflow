@@ -1,6 +1,6 @@
 /* =========================================================
-   Corporate / terminal-grade UI stylesheet
-   Inspired by Bloomberg, trading desks, bank back-office tools.
+   CompliFlow — Operations Console
+   Corporate / terminal-grade UI stylesheet.
    Dense layouts, neutral palette, mono accents, no decoration.
    ========================================================= */
 
@@ -10,6 +10,7 @@
     --panel:           #ffffff;
     --panel-alt:       #fafafa;
     --panel-hover:     #f1f3f5;
+    --panel-sunken:    #f7f8fa;
 
     /* Borders & dividers */
     --border:          #d8dce1;
@@ -21,22 +22,23 @@
     --text-secondary:  #3b424c;
     --muted:           #5b6470;
     --muted-soft:      #8a93a0;
+    --placeholder:     #a3aab4;
 
-    /* Sidebar (dark, near-black, not blue) */
-    --sidebar:         #1a1d23;
+    /* Sidebar */
+    --sidebar: #414659;
     --sidebar-alt:     #20242b;
     --sidebar-text:    #b8bdc6;
     --sidebar-muted:   #7c8390;
     --sidebar-active:  #ffffff;
     --sidebar-border:  #2a2f37;
 
-    /* Accent — single, restrained, corporate blue */
+    /* Accent */
     --accent:          #1e478c;
     --accent-hover:    #173a75;
     --accent-soft:     #eaf0f9;
     --accent-border:   #c7d4ea;
 
-    /* Status — desaturated, document-grade */
+    /* Status */
     --success:         #1f7a3a;
     --success-soft:    #eaf4ed;
     --success-border:  #c5dfcd;
@@ -58,12 +60,12 @@
     --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas,
     "Liberation Mono", monospace;
 
-    /* Geometry — tight, document-like */
+    /* Geometry */
     --radius-sm: 2px;
     --radius:    3px;
     --radius-lg: 4px;
 
-    /* Shadow — barely-there */
+    /* Shadow */
     --shadow-1: 0 1px 0 rgba(20, 24, 31, 0.04);
     --shadow-2: 0 1px 2px rgba(20, 24, 31, 0.06);
 }
@@ -89,6 +91,8 @@ html, body {
     font-feature-settings: "tnum" 1, "cv11" 1;
 }
 
+html, body { height: 100%; }
+
 h1, h2, h3, h4 {
     font-weight: 600;
     letter-spacing: -0.01em;
@@ -99,12 +103,14 @@ a {
     color: var(--accent);
     text-decoration: none;
 }
-a:hover { text-decoration: underline; }
+a:hover { text-decoration: underline; color: var(--accent-hover); }
 
 code, kbd, .mono {
     font-family: var(--font-mono);
     font-size: 0.92em;
 }
+
+hr { border: 0; border-top: 1px solid var(--divider); margin: 16px 0; }
 
 /* ---------- Auth ---------- */
 
@@ -140,6 +146,11 @@ code, kbd, .mono {
     border-bottom: 1px solid var(--divider);
 }
 
+.auth-form .mb-3,
+.auth-form .mb-4 { margin-bottom: 16px !important; }
+
+.auth-form .btn { width: 100%; padding: 9px 14px; font-size: 13px; }
+
 .brand-mark {
     width: 36px;
     height: 36px;
@@ -152,12 +163,14 @@ code, kbd, .mono {
     font-weight: 600;
     font-size: 14px;
     letter-spacing: 0.04em;
+    flex-shrink: 0;
 }
 
 .brand-title {
     font-weight: 600;
     font-size: 13px;
     letter-spacing: 0.02em;
+    color: var(--text);
 }
 
 .brand-subtitle {
@@ -186,16 +199,25 @@ code, kbd, .mono {
     display: flex;
     min-height: 100vh;
     background: var(--bg);
+    align-items: stretch;
 }
 
 .app-sidebar {
     width: 232px;
+    flex-shrink: 0;
     background: var(--sidebar);
     color: var(--sidebar-text);
     display: flex;
     flex-direction: column;
     padding: 16px 12px;
     border-right: 1px solid var(--sidebar-border);
+    position: sticky;
+    top: 0;
+    align-self: stretch;
+    min-height: 100vh;
+    height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto;
 }
 
 .sidebar-brand {
@@ -224,7 +246,7 @@ code, kbd, .mono {
     font-size: 13px;
     font-weight: 500;
     border-left: 2px solid transparent;
-    transition: background 80ms linear, color 80ms linear;
+    transition: background 80ms linear, color 80ms linear, border-color 80ms linear;
 }
 
 .sidebar-nav a:hover {
@@ -271,9 +293,21 @@ code, kbd, .mono {
     border-top: 1px solid var(--sidebar-border);
 }
 
+.sidebar-footer .small-label { color: var(--sidebar-muted); }
+.sidebar-footer .btn-outline-secondary {
+    background: transparent;
+    color: var(--sidebar-text);
+    border-color: var(--sidebar-border);
+}
+.sidebar-footer .btn-outline-secondary:hover {
+    background: var(--sidebar-alt);
+    color: #fff;
+    border-color: var(--sidebar-border);
+}
+
 .small-label {
     font-size: 10px;
-    color: var(--sidebar-muted);
+    color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-weight: 600;
@@ -344,6 +378,8 @@ code, kbd, .mono {
     box-shadow: var(--shadow-1);
 }
 
+.panel { display: flex; flex-direction: column; }
+
 .metric-card {
     padding: 14px 16px;
     min-height: 0;
@@ -374,11 +410,20 @@ code, kbd, .mono {
     font-family: var(--font-mono);
 }
 
+/* Panel header: title block on the left, optional actions on the right.
+   Single-child headers stay correctly aligned thanks to flex defaults. */
 .panel-header {
     padding: 12px 16px;
     border-bottom: 1px solid var(--divider);
     background: var(--panel-alt);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    min-height: 44px;
 }
+
+.panel-header > div:first-child { min-width: 0; flex: 1; }
 
 .panel-header h2 {
     margin: 0 0 2px 0;
@@ -395,7 +440,7 @@ code, kbd, .mono {
     font-size: 12px;
 }
 
-.panel-body { padding: 14px 16px; }
+.panel-body { padding: 14px 16px; flex: 1; }
 
 /* ---------- Activity feed ---------- */
 
@@ -411,7 +456,8 @@ code, kbd, .mono {
     padding: 10px 0;
     border-bottom: 1px solid var(--divider);
 }
-.activity-item:last-child { border-bottom: 0; }
+.activity-item:last-child { border-bottom: 0; padding-bottom: 0; }
+.activity-item:first-child { padding-top: 0; }
 
 .activity-dot {
     width: 6px;
@@ -532,7 +578,9 @@ code, kbd, .mono {
     border-color: var(--warning-border);
 }
 
-/* ---------- Details grid ---------- */
+/* ---------- Details grid ----------
+   dt = label (uppercase muted)
+   dd = value (default sans, mono only when .mono is added) */
 
 .details-grid {
     display: grid;
@@ -541,10 +589,12 @@ code, kbd, .mono {
     margin: 0;
 }
 
+.details-grid > div { min-width: 0; }
+
 .details-grid dt {
     font-size: 10px;
     color: var(--muted);
-    margin-bottom: 3px;
+    margin-bottom: 4px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-weight: 600;
@@ -554,10 +604,20 @@ code, kbd, .mono {
     margin: 0;
     font-size: 13px;
     color: var(--text);
-    font-family: var(--font-mono);
+    line-height: 1.45;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
 }
 
+.details-grid dd.mono { font-family: var(--font-mono); font-size: 12px; }
+
 .details-full { grid-column: 1 / -1; }
+
+.details-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
 
 /* ---------- Flags ---------- */
 
@@ -601,7 +661,206 @@ code, kbd, .mono {
     margin-bottom: 6px;
     font-size: 12px;
     color: var(--text-secondary);
+    align-items: flex-start;
 }
+
+.audit-item-header .mono { font-size: 11px; white-space: nowrap; }
+
+/* ---------- Proof / hash blocks ---------- */
+
+.proof-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.hash-block {
+    display: block;
+    background: var(--panel-sunken);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 10px;
+    word-break: break-all;
+    line-height: 1.5;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text);
+}
+
+.proof-summary-toggle {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-secondary);
+    user-select: none;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 6px 0;
+}
+.proof-summary-toggle:hover { color: var(--text); }
+
+.proof-json {
+    margin: 0;
+    padding: 12px 14px;
+    background: var(--sidebar);
+    color: #d6dae1;
+    border-radius: var(--radius);
+    border: 1px solid var(--sidebar-border);
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ---------- Bootstrap overrides for visual consistency ---------- */
+
+.form-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    display: block;
+}
+
+.form-control,
+.form-select,
+textarea.form-control {
+    font-size: 13px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 10px;
+    background: var(--panel);
+    box-shadow: none;
+    font-family: var(--font-sans);
+    line-height: 1.45;
+    width: 100%;
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea.form-control:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-soft);
+    outline: 0;
+    background: var(--panel);
+    color: var(--text);
+}
+
+.form-control::placeholder,
+textarea.form-control::placeholder {
+    color: var(--placeholder);
+    opacity: 1;
+    font-style: normal;
+    font-family: var(--font-sans);
+}
+
+textarea.form-control { resize: vertical; min-height: 72px; }
+
+.btn {
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    padding: 7px 14px;
+    letter-spacing: 0.02em;
+    box-shadow: none;
+    border: 1px solid transparent;
+    transition: background 80ms linear, border-color 80ms linear, color 80ms linear;
+    line-height: 1.45;
+}
+
+.btn-sm {
+    font-size: 11px;
+    padding: 4px 10px;
+}
+
+.btn-dark,
+.btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+.btn-dark:hover,
+.btn-primary:hover,
+.btn-dark:focus,
+.btn-primary:focus {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+    color: #fff;
+}
+
+.btn-success {
+    background: var(--success);
+    border-color: var(--success);
+    color: #fff;
+}
+.btn-success:hover,
+.btn-success:focus {
+    background: #195e2d;
+    border-color: #195e2d;
+    color: #fff;
+}
+
+.btn-outline-secondary {
+    background: var(--panel);
+    border-color: var(--border-strong);
+    color: var(--text-secondary);
+}
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus {
+    background: var(--panel-hover);
+    border-color: var(--border-strong);
+    color: var(--text);
+}
+
+.btn-outline-danger {
+    background: var(--panel);
+    border-color: var(--critical-border);
+    color: var(--critical);
+}
+.btn-outline-danger:hover,
+.btn-outline-danger:focus {
+    background: var(--critical-soft);
+    border-color: var(--critical);
+    color: var(--critical);
+}
+
+.alert {
+    font-size: 12px;
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    border: 1px solid transparent;
+    margin-bottom: 16px;
+}
+
+.alert-success {
+    background: var(--success-soft);
+    border-color: var(--success-border);
+    color: var(--success);
+}
+
+.alert-warning {
+    background: var(--warning-soft);
+    border-color: var(--warning-border);
+    color: var(--warning);
+}
+
+.alert-danger {
+    background: var(--critical-soft);
+    border-color: var(--critical-border);
+    color: var(--critical);
+}
+
+.text-muted { color: var(--muted) !important; }
+.text-danger { color: var(--critical) !important; }
+.fw-semibold { font-weight: 600; }
+.small { font-size: 11px; }
+
+.table-responsive { border-radius: var(--radius); overflow-x: auto; }
+
+/* Bootstrap row/col gutters look better tightened in dense layouts */
+.row.g-4 { --bs-gutter-x: 16px; --bs-gutter-y: 16px; }
+.row.g-3 { --bs-gutter-x: 12px; --bs-gutter-y: 12px; }
 
 /* ---------- Responsive ---------- */
 
@@ -614,6 +873,11 @@ code, kbd, .mono {
         padding: 10px 14px;
         border-right: 0;
         border-bottom: 1px solid var(--sidebar-border);
+        position: static;
+        height: auto;
+        min-height: 0;
+        max-height: none;
+        overflow: visible;
     }
     .sidebar-brand {
         margin: 0 16px 0 0;
@@ -631,76 +895,6 @@ code, kbd, .mono {
     .details-grid { grid-template-columns: 1fr; }
 }
 
-.proof-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.hash-block {
-    display: block;
-    background: #f8fafc;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 12px;
-    word-break: break-all;
-}
-
-.proof-json {
-    margin: 0;
-    padding: 14px;
-    background: #0f172a;
-    color: #e2e8f0;
-    border-radius: 12px;
-    border: 1px solid #1e293b;
-    overflow-x: auto;
-    font-size: 0.82rem;
-    line-height: 1.45;
-    white-space: pre-wrap;
-    word-break: break-word;
-}
-
-.details-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.proof-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.hash-block {
-    display: block;
-    background: #f8fafc;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
-    word-break: break-all;
-    line-height: 1.45;
-}
-
-.proof-summary-toggle {
-    cursor: pointer;
-    font-weight: 600;
-    color: var(--text);
-    user-select: none;
-}
-
-.proof-json {
-    margin: 0;
-    padding: 14px;
-    background: #0f172a;
-    color: #e2e8f0;
-    border-radius: 10px;
-    border: 1px solid #1e293b;
-    overflow-x: auto;
-    font-size: 0.82rem;
-    line-height: 1.45;
-    white-space: pre-wrap;
-    word-break: break-word;
-}
-
 @media (max-width: 1200px) {
-    .proof-grid {
-        grid-template-columns: 1fr;
-    }
+    .proof-grid { grid-template-columns: 1fr; }
 }
