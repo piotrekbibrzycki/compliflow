@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle} + ' | CompliFlow'">Policies | CompliFlow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar('policies')}"></div>
+
+    <main class="app-main">
+        <div th:replace="~{fragments/topbar :: topbar(${pageTitle}, ${pageSubtitle})}"></div>
+
+        <section class="content-section">
+            <section class="panel mb-4">
+                <div class="panel-header">
+                    <div>
+                        <h2>Active policy rules</h2>
+                        <p>Read-only view of the compliance decision rules currently used by CompliFlow.</p>
+                    </div>
+                </div>
+
+                <div class="panel-body">
+                    <div class="mb-3 text-muted" th:text="'Showing ' + ${#lists.size(rules)} + ' rules'">
+                        Showing 0 rules
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table align-middle dashboard-table mb-0">
+                            <thead>
+                            <tr>
+                                <th>Policy</th>
+                                <th>Scenario</th>
+                                <th>Decision</th>
+                                <th>Priority</th>
+                                <th>Review</th>
+                                <th>Conditions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="rule : ${rules}">
+                                <td>
+                                    <div class="mono fw-semibold" th:text="${rule.policyCode}">AML-LARGE-TRANSFER-THRESHOLD</div>
+                                    <div class="small text-muted" th:text="${rule.policyVersion}">1.0</div>
+                                </td>
+
+                                <td class="mono" th:text="${rule.scenarioCode}">LARGE_TRANSFER_THRESHOLD</td>
+
+                                <td>
+                                    <span class="status-badge"
+                                          th:classappend="' decision-' + ${#strings.toLowerCase(rule.decision)}"
+                                          th:text="${rule.decision}">FLAG</span>
+                                </td>
+
+                                <td th:text="${rule.priority}">500</td>
+
+                                <td th:text="${rule.reviewAllowed}">true</td>
+
+                                <td class="reason-cell" th:text="${rule.conditions}">
+                                    Min amount = 10000
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>How policies are used</h2>
+                        <p>CompliFlow evaluates each transfer against active decision-table rows before any funds move.</p>
+                    </div>
+                </div>
+
+                <div class="panel-body">
+                    <div class="small text-muted mb-2">Decision order</div>
+                    <div class="flags-wrap">
+                        <span class="mini-flag">BLOCK overrides everything</span>
+                        <span class="mini-flag">FLAG sends transfer to manual review</span>
+                        <span class="mini-flag">PASS allows execution</span>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+</div>
+</body>
+</html>

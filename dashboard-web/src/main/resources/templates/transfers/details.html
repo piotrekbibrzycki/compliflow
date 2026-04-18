@@ -15,6 +15,14 @@
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle}, ${pageSubtitle})}"></div>
 
         <section class="content-section">
+            <div th:if="${successMessage}" class="alert alert-success mb-4" th:text="${successMessage}">
+                Transfer approved successfully.
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger mb-4" th:text="${errorMessage}">
+                Failed to process transfer review.
+            </div>
+
             <div class="mb-3">
                 <a th:href="@{/transfers}" class="btn btn-sm btn-outline-secondary">← Back to transfers</a>
             </div>
@@ -38,6 +46,7 @@
                                     <dt>ID</dt>
                                     <dd class="mono" th:text="${transfer.id}">1</dd>
                                 </div>
+
                                 <div>
                                     <dt>Status</dt>
                                     <dd>
@@ -46,14 +55,17 @@
                                               th:text="${transfer.status}">COMPLETED</span>
                                     </dd>
                                 </div>
+
                                 <div>
                                     <dt>From</dt>
                                     <dd class="mono" th:text="${transfer.fromAccount}">PL...</dd>
                                 </div>
+
                                 <div>
                                     <dt>To</dt>
                                     <dd class="mono" th:text="${transfer.toAccount != null ? transfer.toAccount : transfer.targetWalletAddress}">PL...</dd>
                                 </div>
+
                                 <div>
                                     <dt>Amount</dt>
                                     <dd>
@@ -61,6 +73,7 @@
                                         <span th:text="${transfer.currency}">PLN</span>
                                     </dd>
                                 </div>
+
                                 <div>
                                     <dt>Decision</dt>
                                     <dd>
@@ -69,21 +82,25 @@
                                               th:text="${transfer.complianceDecision}">PASS</span>
                                     </dd>
                                 </div>
+
                                 <div>
                                     <dt>Payment Rail</dt>
                                     <dd th:text="${transfer.paymentRail}">SEPA</dd>
                                 </div>
+
                                 <div>
                                     <dt>Counterparty Type</dt>
                                     <dd th:text="${transfer.counterpartyType}">BANK_ACCOUNT</dd>
                                 </div>
+
                                 <div>
                                     <dt>Created</dt>
                                     <dd class="mono" th:text="${transfer.createdAt}">2026-04-18T15:03:05</dd>
                                 </div>
+
                                 <div>
                                     <dt>Completed</dt>
-                                    <dd class="mono" th:text="${transfer.completedAt}">2026-04-18T15:03:05</dd>
+                                    <dd class="mono" th:text="${transfer.completedAt != null ? transfer.completedAt : '—'}">—</dd>
                                 </div>
                             </dl>
                         </div>
@@ -95,39 +112,21 @@
                         <div class="panel-header">
                             <div>
                                 <h2>Compliance outcome</h2>
-                                <p>Human-readable explanation for this transfer.</p>
+                                <p>Summary of the compliance result for this transfer.</p>
                             </div>
                         </div>
                         <div class="panel-body">
                             <div class="mb-3">
                                 <div class="small-label text-muted mb-1">Summary reason</div>
-                                <div th:text="${explanation != null ? explanation.complianceSummaryReason : transfer.complianceReasonSummary}">
+                                <div th:text="${transfer.complianceReasonSummary}">
                                     No compliance summary available.
                                 </div>
                             </div>
 
-                            <div class="mb-3" th:if="${explanation != null && explanation.finalExplanation != null}">
-                                <div class="small-label text-muted mb-1">User explanation</div>
-                                <div th:text="${explanation.finalExplanation.userExplanation}">
-                                    User explanation
-                                </div>
-                            </div>
-
-                            <div class="mb-3" th:if="${explanation != null && explanation.finalExplanation != null}">
-                                <div class="small-label text-muted mb-1">Admin explanation</div>
-                                <div th:text="${explanation.finalExplanation.adminExplanation}">
-                                    Admin explanation
-                                </div>
-                            </div>
-
-                            <div th:if="${explanation != null && explanation.stateFlags != null}">
-                                <div class="small-label text-muted mb-2">State flags</div>
-                                <div class="flags-wrap">
-                                    <span class="mini-flag" th:text="'Funds moved: ' + ${explanation.stateFlags.fundsMoved}">Funds moved</span>
-                                    <span class="mini-flag" th:text="'Reviewable: ' + ${explanation.stateFlags.reviewable}">Reviewable</span>
-                                    <span class="mini-flag" th:text="'Blocked: ' + ${explanation.stateFlags.blocked}">Blocked</span>
-                                    <span class="mini-flag" th:text="'Approved: ' + ${explanation.stateFlags.approved}">Approved</span>
-                                    <span class="mini-flag" th:text="'Rejected: ' + ${explanation.stateFlags.rejected}">Rejected</span>
+                            <div th:if="${transfer.failureReason != null && !#strings.isEmpty(transfer.failureReason)}">
+                                <div class="small-label text-muted mb-1">Failure reason</div>
+                                <div th:text="${transfer.failureReason}">
+                                    Failure reason
                                 </div>
                             </div>
                         </div>
@@ -143,34 +142,59 @@
                             </div>
                         </div>
                         <div class="panel-body">
-                            <div th:if="${explanation != null && explanation.reviewMetadata != null}">
-                                <dl class="details-grid">
-                                    <div>
-                                        <dt>Reviewed</dt>
-                                        <dd th:text="${explanation.reviewMetadata.reviewed}">false</dd>
-                                    </div>
-                                    <div>
-                                        <dt>Decision</dt>
-                                        <dd th:text="${explanation.reviewMetadata.reviewDecision}">APPROVE</dd>
-                                    </div>
-                                    <div>
-                                        <dt>Reviewed By</dt>
-                                        <dd th:text="${explanation.reviewMetadata.reviewedBy}">admin</dd>
-                                    </div>
-                                    <div>
-                                        <dt>Reviewed At</dt>
-                                        <dd class="mono" th:text="${explanation.reviewMetadata.reviewedAt}">2026-04-18T15:10</dd>
-                                    </div>
-                                    <div class="details-full">
-                                        <dt>Comment</dt>
-                                        <dd th:text="${explanation.reviewMetadata.reviewComment}">Approved during demo review</dd>
-                                    </div>
-                                </dl>
-                            </div>
+                            <dl class="details-grid">
+                                <div>
+                                    <dt>Reviewed By</dt>
+                                    <dd th:text="${transfer.reviewedBy != null ? transfer.reviewedBy : 'Not reviewed yet'}">Not reviewed yet</dd>
+                                </div>
 
-                            <div th:if="${explanation == null || explanation.reviewMetadata == null}" class="text-muted">
-                                No review metadata available.
+                                <div>
+                                    <dt>Reviewed At</dt>
+                                    <dd class="mono" th:text="${transfer.reviewedAt != null ? transfer.reviewedAt : '—'}">—</dd>
+                                </div>
+
+                                <div class="details-full">
+                                    <dt>Review Comment</dt>
+                                    <dd th:text="${transfer.reviewComment != null && !#strings.isEmpty(transfer.reviewComment) ? transfer.reviewComment : 'No review comment available.'}">
+                                        No review comment available.
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="col-xl-6" th:if="${transfer.status == 'PENDING_REVIEW'}">
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <h2>Manual review action</h2>
+                                <p>Approve or reject this transfer after compliance review.</p>
                             </div>
+                        </div>
+
+                        <div class="panel-body">
+                            <form th:action="@{'/transfers/' + ${transfer.id} + '/approve'}" method="post" class="mb-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Approval comment</label>
+                                    <textarea name="comment"
+                                              class="form-control"
+                                              rows="3"
+                                              placeholder="Add a short approval rationale..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-success">Approve transfer</button>
+                            </form>
+
+                            <form th:action="@{'/transfers/' + ${transfer.id} + '/reject'}" method="post">
+                                <div class="mb-3">
+                                    <label class="form-label">Rejection comment</label>
+                                    <textarea name="comment"
+                                              class="form-control"
+                                              rows="3"
+                                              placeholder="Add a short rejection rationale..."></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-outline-danger">Reject transfer</button>
+                            </form>
                         </div>
                     </section>
                 </div>
@@ -184,23 +208,36 @@
                             </div>
                         </div>
                         <div class="panel-body">
-                            <div th:if="${explanation != null && explanation.auditEvents != null && !#lists.isEmpty(explanation.auditEvents)}" class="audit-list">
-                                <div class="audit-item" th:each="event : ${explanation.auditEvents}">
+                            <div th:if="${auditEvents != null && !#lists.isEmpty(auditEvents)}" class="audit-list">
+                                <div class="audit-item" th:each="event : ${auditEvents}">
                                     <div class="audit-item-header">
-                                        <div class="fw-semibold" th:text="${event.ruleName}">ThresholdRule</div>
+                                        <div>
+                                            <div class="fw-semibold" th:text="${event.ruleName}">ThresholdRule</div>
+                                            <div class="small text-muted"
+                                                 th:text="${event.policyCode != null ? event.policyCode : 'No policy code'}">
+                                                AML-001
+                                            </div>
+                                        </div>
                                         <div class="mono text-muted" th:text="${event.createdAt}">2026-04-18T15:03</div>
                                     </div>
-                                    <div class="mb-1">
+
+                                    <div class="mb-2">
                                         <span class="status-badge"
                                               th:classappend="' decision-' + ${#strings.toLowerCase(event.decision)}"
                                               th:text="${event.decision}">FLAG</span>
                                     </div>
-                                    <div class="mb-1" th:text="${event.reason}">Reason</div>
-                                    <div class="small text-muted" th:text="${event.userFacingExplanation}">Explanation</div>
+
+                                    <div class="mb-2" th:text="${event.reason}">Reason</div>
+
+                                    <div class="small text-muted"
+                                         th:if="${event.userFacingExplanation != null && !#strings.isEmpty(event.userFacingExplanation)}"
+                                         th:text="${event.userFacingExplanation}">
+                                        User facing explanation
+                                    </div>
                                 </div>
                             </div>
 
-                            <div th:if="${explanation == null || explanation.auditEvents == null || #lists.isEmpty(explanation.auditEvents)}" class="text-muted">
+                            <div th:if="${auditEvents == null || #lists.isEmpty(auditEvents)}" class="text-muted">
                                 No audit events available.
                             </div>
                         </div>

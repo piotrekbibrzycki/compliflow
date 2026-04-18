@@ -46,20 +46,22 @@ public class TransferApiClient {
         }
     }
 
-    public TransferExplanationResponse getTransferExplanation(DashboardSessionUser user, Long transferId) {
+    public List<TransferAuditEventItem> getTransferAuditEvents(DashboardSessionUser user, Long transferId) {
         try {
-            return restClient.get()
-                    .uri("/api/transfers/{id}/explanation", transferId)
+            AuditEventListResponse response = restClient.get()
+                    .uri("/api/audit-events/transfer/{id}", transferId)
                     .header(HttpHeaders.AUTHORIZATION, bearer(user))
                     .retrieve()
-                    .body(TransferExplanationResponse.class);
+                    .body(AuditEventListResponse.class);
+
+            return response == null ? List.of() : response;
         } catch (RestClientResponseException ex) {
-            log.error("Transfer explanation call failed. transferId={}, status={}, body={}",
+            log.error("Transfer audit events call failed. transferId={}, status={}, body={}",
                     transferId, ex.getStatusCode(), ex.getResponseBodyAsString(), ex);
-            return null;
+            return List.of();
         } catch (Exception ex) {
-            log.error("Transfer explanation call failed. transferId={}", transferId, ex);
-            return null;
+            log.error("Transfer audit events call failed. transferId={}", transferId, ex);
+            return List.of();
         }
     }
 
@@ -69,6 +71,68 @@ public class TransferApiClient {
 
     public static class TransferListResponse extends ArrayList<TransferSummaryItem> {
     }
+
+    public static class AuditEventListResponse extends ArrayList<TransferAuditEventItem> {
+    }
+
+    public void reviewTransfer(DashboardSessionUser user, Long transferId, String decision, String comment) {
+        try {
+            restClient.patch()
+                    .uri("/api/transfers/{id}/review", transferId)
+                    .header(HttpHeaders.AUTHORIZATION, bearer(user))
+                    .header(HttpHeaders.CONTENT_TYPE, "application/json")
+                    .body(new TransferReviewRequest(decision, comment))
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (RestClientResponseException ex) {
+            log.error("Transfer review call failed. transferId={}, status={}, body={}",
+                    transferId, ex.getStatusCode(), ex.getResponseBodyAsString(), ex);
+            throw ex;
+        } catch (Exception ex) {
+            log.error("Transfer review call failed. transferId={}", transferId, ex);
+            throw new IllegalStateException("Transfer review request failed", ex);
+        }
+    }
+
+    public List<TransferSummaryItem> getPendingReviewTransfers(DashboardSessionUser user) {
+        try {
+            TransferListResponse response = restClient.get()
+                    .uri("/api/transfers/pending-review")
+                    .header(HttpHeaders.AUTHORIZATION, bearer(user))
+                    .retrieve()
+                    .body(TransferListResponse.class);
+
+            return response == null ? List.of() : response;
+        } catch (RestClientResponseException ex) {
+            log.error("Pending review transfers call failed. status={}, body={}",
+                    ex.getStatusCode(), ex.getResponseBodyAsString(), ex);
+            return List.of();
+        } catch (Exception ex) {
+            log.error("Pending review transfers call failed.", ex);
+            return List.of();
+        }
+    }
+
+    public List<ComplianceDecisionRuleItem> getDecisionRules(DashboardSessionUser user) {
+        try {
+            DecisionRuleListResponse response = restClient.get()
+                    .uri("/api/compliance/decision-rules")
+                    .header(HttpHeaders.AUTHORIZATION, bearer(user))
+                    .retrieve()
+                    .body(DecisionRuleListResponse.class);
+
+            return response == null ? List.of() : response;
+        } catch (RestClientResponseException ex) {
+            log.error("Decision rules call failed. status={}, body={}",
+                    ex.getStatusCode(), ex.getResponseBodyAsString(), ex);
+            return List.of();
+        } catch (Exception ex) {
+            log.error("Decision rules call failed.", ex);
+            return List.of();
+        }
+    }
+
+
 
     @Getter
     @Setter
@@ -95,22 +159,15 @@ public class TransferApiClient {
 
     @Getter
     @Setter
-    public static class TransferExplanationResponse {
+    public static class TransferAuditEventItem {
+        private Long id;
         private Long transferId;
-        private String transferStatus;
-        private String complianceDecision;
-        private String complianceSummaryReason;
-        private List<TransferExplanationAuditEvent> auditEvents;
-        private TransferExplanationNarrative finalExplanation;
-        private TransferExplanationReviewMetadata reviewMetadata;
-        private TransferExplanationStateFlags stateFlags;
-        private Object auditProof;
-    }
-
-    @Getter
-    @Setter
-    public static class TransferExplanationAuditEvent {
+        private String sourceAccount;
+        private String targetReference;
         private String ruleName;
+        private String policyCode;
+        private String policyVersion;
+        private String scenarioCode;
         private String decision;
         private String reason;
         private String legalContext;
@@ -127,33 +184,45 @@ public class TransferApiClient {
         private LocalDateTime createdAt;
     }
 
-    @Getter
-    @Setter
-    public static class TransferExplanationNarrative {
-        private String userExplanation;
-        private String adminExplanation;
+    public record TransferReviewRequest(
+            String decision,
+            String comment
+    ) {
+    }
+
+    public static class DecisionRuleListResponse extends ArrayList<ComplianceDecisionRuleItem> {
     }
 
     @Getter
     @Setter
-    public static class TransferExplanationReviewMetadata {
-        private boolean reviewed;
-        private String reviewDecision;
-        private String reviewedBy;
-        private LocalDateTime reviewedAt;
-        private String reviewComment;
-    }
-
-    @Getter
-    @Setter
-    public static class TransferExplanationStateFlags {
-        private boolean fundsMoved;
-        private boolean reviewable;
-        private boolean blocked;
-        private boolean approved;
-        private boolean rejected;
-        private boolean auditAnchoredOnChain;
-        private boolean auditAnchorVerified;
-        private List<String> onChainTxHashes;
+    public static class ComplianceDecisionRuleItem {
+        private Long id;
+        private Long decisionTableId;
+        private String decisionTableCode;
+        private String ruleCode;
+        private String policyCode;
+        private String policyVersion;
+        private String scenarioCode;
+        private Integer priority;
+        private Boolean active;
+        private java.math.BigDecimal minAmount;
+        private java.math.BigDecimal maxAmount;
+        private String currencyEquals;
+        private String paymentRailEquals;
+        private String counterpartyTypeEquals;
+        private Integer sourceRiskScoreGte;
+        private Integer destinationRiskScoreGte;
+        private Integer recentTransfersLastHourGte;
+        private Boolean sourceRestricted;
+        private Boolean destinationRestricted;
+        private Boolean targetWalletRestricted;
+        private Boolean requiresTargetWallet;
+        private String decision;
+        private Boolean reviewAllowed;
+        private String summaryReason;
+        private String legalContext;
+        private String internalPolicy;
+        private String userFacingExplanation;
+        private java.time.LocalDateTime createdAt;
     }
 }

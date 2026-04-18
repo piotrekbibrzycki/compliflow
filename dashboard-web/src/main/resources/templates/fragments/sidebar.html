@@ -20,16 +20,15 @@
                 Transfers
             </a>
 
-            <span class="sidebar-nav-disabled">
-        Review Queue
-        <span class="soon-badge">Soon</span>
-    </span>
+            <a th:href="@{/review-queue}" th:classappend="${active == 'review'} ? ' active' : ''">
+                Review Queue
+            </a>
 
-            <span class="sidebar-nav-disabled">
-        Policies
-        <span class="soon-badge">Soon</span>
-    </span>
+            <a th:href="@{/policies}" th:classappend="${active == 'policies'} ? ' active' : ''">
+                Policies
+            </a>
         </nav>
+
         <div class="sidebar-footer">
             <div class="small-label">Signed in as</div>
             <div class="user-email" th:text="${currentUserEmail}">admin@compliflow.local</div>

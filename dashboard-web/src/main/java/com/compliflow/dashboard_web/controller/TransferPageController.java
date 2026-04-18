@@ -1,15 +1,15 @@
 package com.compliflow.dashboard_web.controller;
 
 import com.compliflow.dashboard_web.service.TransferApiClient;
-import com.compliflow.dashboard_web.service.TransferApiClient.TransferExplanationResponse;
+import com.compliflow.dashboard_web.service.TransferApiClient.TransferAuditEventItem;
 import com.compliflow.dashboard_web.service.TransferApiClient.TransferSummaryItem;
 import com.compliflow.dashboard_web.session.DashboardSessionService;
 import com.compliflow.dashboard_web.session.DashboardSessionUser;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -47,14 +47,50 @@ public class TransferPageController {
                 .findFirst()
                 .orElse(null);
 
-        TransferExplanationResponse explanation = transferApiClient.getTransferExplanation(user, id);
+        List<TransferAuditEventItem> auditEvents = transfer == null
+                ? List.of()
+                : transferApiClient.getTransferAuditEvents(user, id);
 
         model.addAttribute("pageTitle", "Transfer Details");
         model.addAttribute("pageSubtitle", "Detailed compliance and audit view");
         model.addAttribute("currentUserEmail", user.getEmail());
         model.addAttribute("transfer", transfer);
-        model.addAttribute("explanation", explanation);
+        model.addAttribute("auditEvents", auditEvents);
 
         return "transfers/details";
+    }
+
+    @PostMapping("/transfers/{id}/approve")
+    public String approveTransfer(@PathVariable Long id,
+                                  @RequestParam(name = "comment", required = false) String comment,
+                                  HttpSession session,
+                                  RedirectAttributes redirectAttributes) {
+        DashboardSessionUser user = dashboardSessionService.getUser(session);
+
+        try {
+            transferApiClient.reviewTransfer(user, id, "APPROVE", comment);
+            redirectAttributes.addFlashAttribute("successMessage", "Transfer approved successfully.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to approve transfer.");
+        }
+
+        return "redirect:/transfers/" + id;
+    }
+
+    @PostMapping("/transfers/{id}/reject")
+    public String rejectTransfer(@PathVariable Long id,
+                                 @RequestParam(name = "comment", required = false) String comment,
+                                 HttpSession session,
+                                 RedirectAttributes redirectAttributes) {
+        DashboardSessionUser user = dashboardSessionService.getUser(session);
+
+        try {
+            transferApiClient.reviewTransfer(user, id, "REJECT", comment);
+            redirectAttributes.addFlashAttribute("successMessage", "Transfer rejected successfully.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to reject transfer.");
+        }
+
+        return "redirect:/transfers/" + id;
     }
 }
