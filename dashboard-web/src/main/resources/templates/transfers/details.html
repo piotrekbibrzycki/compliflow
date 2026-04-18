@@ -20,7 +20,7 @@
             </div>
 
             <div th:if="${errorMessage}" class="alert alert-danger mb-4" th:text="${errorMessage}">
-                Failed to process transfer review.
+                Failed to process action.
             </div>
 
             <div class="mb-3">
@@ -213,8 +213,7 @@
                                     <div class="audit-item-header">
                                         <div>
                                             <div class="fw-semibold" th:text="${event.ruleName}">ThresholdRule</div>
-                                            <div class="small text-muted"
-                                                 th:text="${event.policyCode != null ? event.policyCode : 'No policy code'}">
+                                            <div class="small text-muted" th:text="${event.policyCode != null ? event.policyCode : 'No policy code'}">
                                                 AML-001
                                             </div>
                                         </div>
@@ -239,6 +238,120 @@
 
                             <div th:if="${auditEvents == null || #lists.isEmpty(auditEvents)}" class="text-muted">
                                 No audit events available.
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="col-12">
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <h2>Blockchain proof</h2>
+                                <p>Tamper-evident proof state for this transfer audit payload.</p>
+                            </div>
+                        </div>
+
+                        <div class="panel-body">
+                            <div th:if="${proof == null}" class="text-muted">
+                                Proof data is not available.
+                            </div>
+
+                            <div th:if="${proof != null}">
+                                <dl class="details-grid">
+                                    <div>
+                                        <dt>Proof Schema</dt>
+                                        <dd th:text="${proof.proofSchemaVersion != null ? proof.proofSchemaVersion : '—'}">compliflow-proof-v1</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>Audit Event Count</dt>
+                                        <dd th:text="${proof.auditEventCount != null ? proof.auditEventCount : 0}">5</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>Anchored</dt>
+                                        <dd>
+                                            <span class="status-badge"
+                                                  th:classappend="${proof.anchored != null && proof.anchored} ? ' status-completed' : ' status-pending_review'"
+                                                  th:text="${proof.anchored != null && proof.anchored} ? 'ANCHORED' : 'NOT ANCHORED'">
+                                                NOT ANCHORED
+                                            </span>
+                                        </dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>On-chain Verified</dt>
+                                        <dd>
+                                            <span class="status-badge"
+                                                  th:classappend="${proof.onChainVerified != null && proof.onChainVerified} ? ' status-completed' : ' status-pending_review'"
+                                                  th:text="${proof.onChainVerified != null && proof.onChainVerified} ? 'VERIFIED' : 'NOT VERIFIED'">
+                                                NOT VERIFIED
+                                            </span>
+                                        </dd>
+                                    </div>
+
+                                    <div class="details-full">
+                                        <dt>Stored Integrity Hash</dt>
+                                        <dd class="mono hash-block"
+                                            th:text="${proof.storedIntegrityHash != null ? proof.storedIntegrityHash : 'Not stored yet'}">
+                                            Not stored yet
+                                        </dd>
+                                    </div>
+
+                                    <div class="details-full">
+                                        <dt>Current Computed Hash</dt>
+                                        <dd class="mono hash-block"
+                                            th:text="${proof.currentComputedHash != null ? proof.currentComputedHash : '—'}">
+                                            0x...
+                                        </dd>
+                                    </div>
+
+                                    <div class="details-full">
+                                        <dt>On-chain Tx Hash</dt>
+                                        <dd class="mono hash-block"
+                                            th:text="${proof.onChainTxHash != null ? proof.onChainTxHash : 'No transaction yet'}">
+                                            No transaction yet
+                                        </dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>Anchor Network</dt>
+                                        <dd th:text="${proof.anchorNetwork != null ? proof.anchorNetwork : '—'}">ganache-local</dd>
+                                    </div>
+
+                                    <div>
+                                        <dt>Anchored At</dt>
+                                        <dd class="mono" th:text="${proof.anchoredAt != null ? proof.anchoredAt : '—'}">2026-04-18T19:57</dd>
+                                    </div>
+                                </dl>
+
+                                <div class="mt-4 d-flex flex-wrap gap-2"
+                                     th:if="${transfer.status == 'COMPLETED' || transfer.status == 'BLOCKED' || transfer.status == 'REJECTED' || transfer.status == 'FAILED'}">
+
+                                    <form th:if="${proof.anchored == null || !proof.anchored}"
+                                          th:action="@{'/transfers/' + ${transfer.id} + '/proof/anchor'}"
+                                          method="post">
+                                        <button type="submit" class="btn btn-dark">Anchor Proof</button>
+                                    </form>
+
+                                    <form th:if="${proof.anchored != null && proof.anchored}"
+                                          th:action="@{'/transfers/' + ${transfer.id} + '/proof/verify'}"
+                                          method="post">
+                                        <button type="submit" class="btn btn-outline-secondary">Verify Proof</button>
+                                    </form>
+                                </div>
+
+                                <div class="mt-3 text-muted"
+                                     th:if="${transfer.status == 'PENDING_REVIEW'}">
+                                    Proof anchoring becomes available once the transfer reaches a final state.
+                                </div>
+
+                                <details class="mt-4"
+                                         th:if="${proof.canonicalPayloadJson != null && !#strings.isEmpty(proof.canonicalPayloadJson)}">
+                                    <summary class="proof-summary-toggle">Show canonical payload JSON</summary>
+                                    <pre class="proof-json mt-3" th:text="${proof.canonicalPayloadJson}">{}</pre>
+                                </details>
                             </div>
                         </div>
                     </section>

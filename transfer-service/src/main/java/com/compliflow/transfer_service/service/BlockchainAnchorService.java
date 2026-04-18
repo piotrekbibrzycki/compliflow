@@ -14,9 +14,12 @@ import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.Transaction;
+import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.RawTransactionManager;
+import org.web3j.tx.response.PollingTransactionReceiptProcessor;
+import org.web3j.tx.response.TransactionReceiptProcessor;
 import org.web3j.utils.Numeric;
 
 import java.io.IOException;
@@ -40,10 +43,15 @@ public class BlockchainAnchorService {
 
         try (Web3j web3j = Web3j.build(new HttpService(blockchainProperties.getRpcUrl()))) {
             Credentials credentials = Credentials.create(blockchainProperties.getPrivateKey());
+
+            TransactionReceiptProcessor receiptProcessor =
+                    new PollingTransactionReceiptProcessor(web3j, 1000, 15);
+
             RawTransactionManager transactionManager = new RawTransactionManager(
                     web3j,
                     credentials,
-                    blockchainProperties.getChainId()
+                    blockchainProperties.getChainId(),
+                    receiptProcessor
             );
 
             Function function = new Function(
@@ -56,13 +64,30 @@ public class BlockchainAnchorService {
                     Collections.emptyList()
             );
 
-            TransactionReceipt receipt = transactionManager.executeTransaction(
+            String encodedFunction = FunctionEncoder.encode(function);
+
+            EthSendTransaction sendTransaction = transactionManager.sendTransaction(
                     blockchainProperties.getGasPriceWei(),
                     blockchainProperties.getGasLimit(),
                     blockchainProperties.getContractAddress(),
-                    FunctionEncoder.encode(function),
-                    BigInteger.ZERO
+                    encodedFunction,
+                    BigInteger.ZERO,
+                    false
             );
+
+            if (sendTransaction.hasError()) {
+                throw new IllegalStateException(
+                        "Blockchain transaction submission failed: " +
+                                sendTransaction.getError().getMessage()
+                );
+            }
+
+            String transactionHash = sendTransaction.getTransactionHash();
+            if (transactionHash == null || transactionHash.isBlank()) {
+                throw new IllegalStateException("Blockchain transaction hash was not returned.");
+            }
+
+            TransactionReceipt receipt = receiptProcessor.waitForTransactionReceipt(transactionHash);
 
             boolean verified = receipt != null
                     && receipt.isStatusOK()
@@ -70,7 +95,7 @@ public class BlockchainAnchorService {
 
             return new AnchorResult(
                     integrityHash,
-                    receipt != null ? receipt.getTransactionHash() : null,
+                    transactionHash,
                     verified,
                     blockchainProperties.getNetwork(),
                     LocalDateTime.now()
@@ -111,10 +136,12 @@ public class BlockchainAnchorService {
                 return false;
             }
 
-            Bool result = (Bool) decoded.getFirst();
+            Bool result = (Bool) decoded.get(0);
             return result.getValue();
         } catch (IOException e) {
             throw new IllegalStateException("Failed to verify anchored proof on-chain", e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

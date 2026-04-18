@@ -2,6 +2,7 @@ package com.compliflow.dashboard_web.controller;
 
 import com.compliflow.dashboard_web.service.TransferApiClient;
 import com.compliflow.dashboard_web.service.TransferApiClient.TransferAuditEventItem;
+import com.compliflow.dashboard_web.service.TransferApiClient.TransferProofVerificationItem;
 import com.compliflow.dashboard_web.service.TransferApiClient.TransferSummaryItem;
 import com.compliflow.dashboard_web.session.DashboardSessionService;
 import com.compliflow.dashboard_web.session.DashboardSessionUser;
@@ -51,11 +52,16 @@ public class TransferPageController {
                 ? List.of()
                 : transferApiClient.getTransferAuditEvents(user, id);
 
+        TransferApiClient.TransferProofItem proof = transfer == null
+                ? null
+                : transferApiClient.getTransferProof(user, id);
+
         model.addAttribute("pageTitle", "Transfer Details");
         model.addAttribute("pageSubtitle", "Detailed compliance and audit view");
         model.addAttribute("currentUserEmail", user.getEmail());
         model.addAttribute("transfer", transfer);
         model.addAttribute("auditEvents", auditEvents);
+        model.addAttribute("proof", proof);
 
         return "transfers/details";
     }
@@ -89,6 +95,48 @@ public class TransferPageController {
             redirectAttributes.addFlashAttribute("successMessage", "Transfer rejected successfully.");
         } catch (Exception ex) {
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to reject transfer.");
+        }
+
+        return "redirect:/transfers/" + id;
+    }
+
+    @PostMapping("/transfers/{id}/proof/anchor")
+    public String anchorProof(@PathVariable Long id,
+                              HttpSession session,
+                              RedirectAttributes redirectAttributes) {
+        DashboardSessionUser user = dashboardSessionService.getUser(session);
+
+        try {
+            transferApiClient.anchorTransferProof(user, id);
+            redirectAttributes.addFlashAttribute("successMessage", "Blockchain proof anchored successfully.");
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to anchor blockchain proof.");
+        }
+
+        return "redirect:/transfers/" + id;
+    }
+
+    @PostMapping("/transfers/{id}/proof/verify")
+    public String verifyProof(@PathVariable Long id,
+                              HttpSession session,
+                              RedirectAttributes redirectAttributes) {
+        DashboardSessionUser user = dashboardSessionService.getUser(session);
+
+        try {
+            TransferProofVerificationItem verification = transferApiClient.verifyTransferProof(user, id);
+
+            boolean verified = verification != null
+                    && Boolean.TRUE.equals(verification.getMatchesStoredHash())
+                    && Boolean.TRUE.equals(verification.getAnchoredOnChain())
+                    && Boolean.TRUE.equals(verification.getContractLookupConfirmed());
+
+            if (verified) {
+                redirectAttributes.addFlashAttribute("successMessage", "Blockchain proof verified successfully.");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Blockchain proof verification did not confirm integrity.");
+            }
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to verify blockchain proof.");
         }
 
         return "redirect:/transfers/" + id;

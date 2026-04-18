@@ -1,2 +1,2 @@
-GET http://localhost:8082/api/transfers/10/explanation
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBjb21wbGlmbG93LmxvY2FsIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc2NTI1Mzc2LCJleHAiOjE3NzY1Mjg5NzZ9.BtQqZhk_qqQ9UIhI-Qg6zWxv56pJn6hGf0UJ8NoBPF4
+POST http://127.0.0.1:8082/api/transfers/10/proof/anchor
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBjb21wbGlmbG93LmxvY2FsIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc2NTM0OTk2LCJleHAiOjE3NzY1Mzg1OTZ9.rymDu1HA33-WCJdOslbSdDR2ZdpR88RWpaXL_qThIMY

@@ -131,6 +131,56 @@ public class TransferApiClient {
             return List.of();
         }
     }
+    public TransferProofItem getTransferProof(DashboardSessionUser user, Long transferId) {
+        try {
+            return restClient.get()
+                    .uri("/api/transfers/{id}/proof", transferId)
+                    .header(HttpHeaders.AUTHORIZATION, bearer(user))
+                    .retrieve()
+                    .body(TransferProofItem.class);
+        } catch (RestClientResponseException ex) {
+            log.error("Transfer proof call failed. transferId={}, status={}, body={}",
+                    transferId, ex.getStatusCode(), ex.getResponseBodyAsString(), ex);
+            return null;
+        } catch (Exception ex) {
+            log.error("Transfer proof call failed. transferId={}", transferId, ex);
+            return null;
+        }
+    }
+
+    public void anchorTransferProof(DashboardSessionUser user, Long transferId) {
+        try {
+            restClient.post()
+                    .uri("/api/transfers/{id}/proof/anchor", transferId)
+                    .header(HttpHeaders.AUTHORIZATION, bearer(user))
+                    .retrieve()
+                    .toBodilessEntity();
+        } catch (RestClientResponseException ex) {
+            log.error("Transfer proof anchor call failed. transferId={}, status={}, body={}",
+                    transferId, ex.getStatusCode(), ex.getResponseBodyAsString(), ex);
+            throw ex;
+        } catch (Exception ex) {
+            log.error("Transfer proof anchor call failed. transferId={}", transferId, ex);
+            throw new IllegalStateException("Transfer proof anchor request failed", ex);
+        }
+    }
+
+    public TransferProofVerificationItem verifyTransferProof(DashboardSessionUser user, Long transferId) {
+        try {
+            return restClient.get()
+                    .uri("/api/transfers/{id}/proof/verify", transferId)
+                    .header(HttpHeaders.AUTHORIZATION, bearer(user))
+                    .retrieve()
+                    .body(TransferProofVerificationItem.class);
+        } catch (RestClientResponseException ex) {
+            log.error("Transfer proof verify call failed. transferId={}, status={}, body={}",
+                    transferId, ex.getStatusCode(), ex.getResponseBodyAsString(), ex);
+            throw ex;
+        } catch (Exception ex) {
+            log.error("Transfer proof verify call failed. transferId={}", transferId, ex);
+            throw new IllegalStateException("Transfer proof verify request failed", ex);
+        }
+    }
 
 
 
@@ -225,4 +275,37 @@ public class TransferApiClient {
         private String userFacingExplanation;
         private java.time.LocalDateTime createdAt;
     }
+    @Getter
+    @Setter
+    public static class TransferProofItem {
+        private Long transferId;
+        private String transferStatus;
+        private String proofSchemaVersion;
+        private Integer auditEventCount;
+        private Boolean anchored;
+        private String storedIntegrityHash;
+        private String currentComputedHash;
+        private String onChainTxHash;
+        private Boolean onChainVerified;
+        private String anchorNetwork;
+        private LocalDateTime anchoredAt;
+        private String canonicalPayloadJson;
+    }
+
+    @Getter
+    @Setter
+    public static class TransferProofVerificationItem {
+        private Long transferId;
+        private String transferStatus;
+        private String proofSchemaVersion;
+        private String currentComputedHash;
+        private String storedIntegrityHash;
+        private Boolean matchesStoredHash;
+        private Boolean anchoredOnChain;
+        private Boolean contractLookupConfirmed;
+        private String onChainTxHash;
+        private String anchorNetwork;
+        private LocalDateTime anchoredAt;
+    }
+
 }
