@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface AuditEventRepository extends JpaRepository<AuditEvent, Long> {
 
+    List<AuditEvent> findAllByOrderByCreatedAtDesc();
+
+    List<AuditEvent> findByTransferIdOrderByCreatedAtDesc(Long transferId);
+
     List<AuditEvent> findByTransferIdOrderByCreatedAtAsc(Long transferId);
-
-    List<AuditEvent> findBySourceAccountOrderByCreatedAtDesc(String sourceAccount);
-
-    List<AuditEvent> findByDecisionOrderByCreatedAtDesc(ComplianceDecision decision);
 }

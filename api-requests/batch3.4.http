@@ -1,0 +1,51 @@
+@accountHost = http://localhost:8081
+@transferHost = http://localhost:8082
+
+### LOGIN
+POST {{accountHost}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@compliflow.local",
+  "password": "secret123"
+}
+
+> {%
+    client.global.set("admin_token", response.body.token);
+%}
+
+###
+
+### GET ALL TRANSFERS
+GET {{transferHost}}/api/transfers
+Authorization: Bearer {{admin_token}}
+
+###
+
+### GET PENDING REVIEW TRANSFERS
+GET {{transferHost}}/api/transfers/pending-review
+Authorization: Bearer {{admin_token}}
+
+###
+
+### GET COMPLETED TRANSFERS
+GET {{transferHost}}/api/transfers/status/COMPLETED
+Authorization: Bearer {{admin_token}}
+
+###
+
+### GET BLOCKED TRANSFERS
+GET {{transferHost}}/api/transfers/status/BLOCKED
+Authorization: Bearer {{admin_token}}
+
+###
+
+### GET AUDIT EVENTS
+GET {{transferHost}}/api/audit-events
+Authorization: Bearer {{admin_token}}
+
+###
+
+### GET AUDIT FOR TRANSFER 1
+GET {{transferHost}}/api/audit-events/transfer/1
+Authorization: Bearer {{admin_token}}

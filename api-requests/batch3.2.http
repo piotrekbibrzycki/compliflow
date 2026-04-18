@@ -1,0 +1,139 @@
+@accountHost = http://localhost:8081
+@transferHost = http://localhost:8082
+
+@adminEmail = admin@compliflow.local
+@adminPassword = secret123
+
+### LOGIN
+POST {{accountHost}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "password": "{{adminPassword}}"
+}
+
+> {%
+    client.global.set("admin_token", response.body.token);
+%}
+
+###
+
+### CREATE SOURCE ACCOUNT
+POST {{accountHost}}/api/accounts
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "accountNumber": "REVIEW-SRC-{{$timestamp}}",
+  "ownerName": "Review Source",
+  "balance": 50000.00,
+  "currency": "PLN"
+}
+
+> {%
+    client.global.set("review_src", response.body.accountNumber);
+%}
+
+###
+
+### CREATE DEST ACCOUNT
+POST {{accountHost}}/api/accounts
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "accountNumber": "REVIEW-DST-{{$timestamp}}",
+  "ownerName": "Review Destination",
+  "balance": 1000.00,
+  "currency": "PLN"
+}
+
+> {%
+    client.global.set("review_dst", response.body.accountNumber);
+%}
+
+###
+
+### CREATE FLAGGED TRANSFER
+POST {{transferHost}}/api/transfers
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "fromAccount": "{{review_src}}",
+  "toAccount": "{{review_dst}}",
+  "amount": 20000.00,
+  "title": "Flagged transfer for review",
+  "currency": "PLN"
+}
+
+> {%
+    client.test("Flagged transfer should be pending review", function() {
+        client.assert(response.status === 201, "Expected 201");
+        client.assert(response.body.status === "PENDING_REVIEW", "Expected PENDING_REVIEW");
+        client.assert(response.body.complianceDecision === "FLAG", "Expected FLAG");
+    });
+    client.global.set("flagged_transfer_id", response.body.id);
+%}
+
+###
+
+### APPROVE FLAGGED TRANSFER
+PATCH {{transferHost}}/api/transfers/{{flagged_transfer_id}}/review
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "decision": "APPROVE",
+  "comment": "Approved after manual review"
+}
+
+> {%
+    client.test("Approved flagged transfer should complete", function() {
+        client.assert(response.status === 200, "Expected 200");
+        client.assert(response.body.status === "COMPLETED", "Expected COMPLETED");
+        client.assert(response.body.reviewedBy != null, "reviewedBy should be set");
+        client.assert(response.body.reviewedAt != null, "reviewedAt should be set");
+        client.assert(response.body.reviewComment === "Approved after manual review", "Wrong comment");
+    });
+%}
+
+### CREATE ANOTHER FLAGGED TRANSFER
+POST {{transferHost}}/api/transfers
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "fromAccount": "{{review_src}}",
+  "toAccount": "{{review_dst}}",
+  "amount": 25000.00,
+  "title": "Flagged transfer for rejection",
+  "currency": "PLN"
+}
+
+> {%
+    client.global.set("reject_transfer_id", response.body.id);
+%}
+
+###
+
+### REJECT FLAGGED TRANSFER
+PATCH {{transferHost}}/api/transfers/{{reject_transfer_id}}/review
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "decision": "REJECT",
+  "comment": "Rejected after manual review"
+}
+
+> {%
+    client.test("Rejected flagged transfer should be rejected", function() {
+        client.assert(response.status === 200, "Expected 200");
+        client.assert(response.body.status === "REJECTED", "Expected REJECTED");
+        client.assert(response.body.reviewedBy != null, "reviewedBy should be set");
+        client.assert(response.body.reviewedAt != null, "reviewedAt should be set");
+        client.assert(response.body.reviewComment === "Rejected after manual review", "Wrong comment");
+    });
+%}

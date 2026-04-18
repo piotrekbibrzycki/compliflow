@@ -1,0 +1,42 @@
+@accountHost = http://localhost:8081
+@transferHost = http://localhost:8082
+
+### LOGIN
+POST {{accountHost}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@compliflow.local",
+  "password": "secret123"
+}
+
+> {%
+    client.global.set("admin_token", response.body.token);
+%}
+
+###
+
+### CREATE RESTRICTED PARTY
+POST {{transferHost}}/api/restricted-parties
+Authorization: Bearer {{admin_token}}
+Content-Type: application/json
+
+{
+  "matchType": "ACCOUNT_NUMBER",
+  "matchValue": "BLACKLIST-ACC-001",
+  "entityName": "Demo Restricted Account",
+  "source": "MANUAL_ADMIN_ENTRY",
+  "sourceReference": "demo"
+}
+
+###
+
+### GET ALL RESTRICTED PARTIES
+GET {{transferHost}}/api/restricted-parties
+Authorization: Bearer {{admin_token}}
+
+###
+
+### GET ACTIVE RESTRICTED PARTIES
+GET {{transferHost}}/api/restricted-parties?activeOnly=true
+Authorization: Bearer {{admin_token}}

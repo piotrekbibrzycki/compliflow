@@ -30,6 +30,16 @@ public class AuditEvent {
     @Column(nullable = false, length = 100)
     private String ruleName;
 
+    @Column(length = 100)
+    private String policyCode;
+
+    @Column(length = 50)
+    private String policyVersion;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 100)
+    private PolicyScenarioCode scenarioCode;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ComplianceDecision decision;
