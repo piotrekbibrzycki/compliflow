@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="320" viewBox="0 0 680 320">
+<style>
+  text { font-family: "SF Mono", "Cascadia Code", "Fira Code", Consolas, monospace; }
+  .fg { fill: #1a1a1a; }
+  .fg2 { fill: #6b6b6b; }
+  .fg3 { fill: #999999; }
+  .box { fill: #fafafa; stroke: #000000; stroke-width: 0.8; }
+  .line { stroke: #000000; stroke-width: 0.7; fill: none; }
+  .dashed { stroke: #000000; stroke-width: 0.7; stroke-dasharray: 4 3; fill: none; }
+</style>
+<defs>
+  <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+    <path d="M2 2L8 5L2 8" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<rect width="680" height="320" fill="#ffffff"/>
+
+<text x="40" y="32" font-size="9" class="fg3" letter-spacing="0.5">restricted-party screening · match types and sources</text>
+<line x1="40" y1="40" x2="640" y2="40" class="line" stroke-width="0.4"/>
+
+<rect x="40" y="64" width="180" height="180" rx="3" class="dashed"/>
+<text x="56" y="82" font-size="9" class="fg3" letter-spacing="0.5">restricted party dataset</text>
+
+<rect x="56" y="96" width="148" height="32" rx="3" class="box"/>
+<text x="130" y="108" text-anchor="middle" font-size="9" class="fg">ACCOUNT_NUMBER</text>
+<text x="130" y="122" text-anchor="middle" font-size="8" class="fg3">exact match</text>
+
+<rect x="56" y="134" width="148" height="32" rx="3" class="box"/>
+<text x="130" y="146" text-anchor="middle" font-size="9" class="fg">WALLET_ADDRESS</text>
+<text x="130" y="160" text-anchor="middle" font-size="8" class="fg3">exact match · evm</text>
+
+<rect x="56" y="172" width="148" height="32" rx="3" class="box"/>
+<text x="130" y="184" text-anchor="middle" font-size="9" class="fg">NAME_PATTERN</text>
+<text x="130" y="198" text-anchor="middle" font-size="8" class="fg3">prefix / substring</text>
+
+<text x="56" y="226" font-size="9" class="fg2">active flag · soft delete</text>
+<text x="56" y="238" font-size="9" class="fg2">audit who added entries</text>
+
+<line x1="220" y1="154" x2="270" y2="154" class="line" marker-end="url(#a)"/>
+<text x="245" y="148" text-anchor="middle" font-size="8" class="fg3">lookup</text>
+
+<rect x="270" y="64" width="200" height="180" rx="3" class="dashed"/>
+<text x="286" y="82" font-size="9" class="fg3" letter-spacing="0.5">transfer context check</text>
+
+<rect x="286" y="96" width="168" height="30" rx="3" class="box"/>
+<text x="370" y="112" text-anchor="middle" dominant-baseline="central" font-size="10" class="fg">source account</text>
+
+<rect x="286" y="134" width="168" height="30" rx="3" class="box"/>
+<text x="370" y="150" text-anchor="middle" dominant-baseline="central" font-size="10" class="fg">destination account</text>
+
+<rect x="286" y="172" width="168" height="30" rx="3" class="box"/>
+<text x="370" y="188" text-anchor="middle" dominant-baseline="central" font-size="10" class="fg">target wallet (if any)</text>
+
+<text x="370" y="224" text-anchor="middle" font-size="9" class="fg2">any match → restricted = true</text>
+
+<line x1="470" y1="154" x2="520" y2="154" class="line" marker-end="url(#a)"/>
+<text x="495" y="148" text-anchor="middle" font-size="8" class="fg3">flag</text>
+
+<rect x="520" y="120" width="120" height="66" rx="3" class="box"/>
+<text x="580" y="142" text-anchor="middle" font-size="10" class="fg">watchlist rule</text>
+<line x1="530" y1="152" x2="630" y2="152" stroke="#cccccc" stroke-width="0.3"/>
+<circle cx="535" cy="170" r="3" fill="#b0524a"/>
+<text x="545" y="174" font-size="9" class="fg">BLOCK decision</text>
+
+<text x="340" y="286" text-anchor="middle" font-size="9" class="fg3">screening runs on every transfer · result feeds the compliance engine as transfer context</text>
+</svg>

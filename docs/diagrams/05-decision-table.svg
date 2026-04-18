@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="360" viewBox="0 0 680 360">
+<style>
+  text { font-family: "SF Mono", "Cascadia Code", "Fira Code", Consolas, monospace; }
+  .fg { fill: #1a1a1a; }
+  .fg2 { fill: #6b6b6b; }
+  .fg3 { fill: #999999; }
+  .box { fill: #fafafa; stroke: #000000; stroke-width: 0.8; }
+  .line { stroke: #000000; stroke-width: 0.7; fill: none; }
+  .dashed { stroke: #000000; stroke-width: 0.7; stroke-dasharray: 4 3; fill: none; }
+  .divider { stroke: #cccccc; stroke-width: 0.4; }
+</style>
+<defs>
+  <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+    <path d="M2 2L8 5L2 8" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<rect width="680" height="360" fill="#ffffff"/>
+
+<text x="40" y="32" font-size="9" class="fg3" letter-spacing="0.5">decision table · data-driven rules evaluated for each transfer</text>
+<line x1="40" y1="40" x2="640" y2="40" class="line" stroke-width="0.4"/>
+
+<rect x="40" y="60" width="280" height="240" rx="3" class="dashed"/>
+<text x="56" y="78" font-size="9" class="fg3" letter-spacing="0.5">transfer context</text>
+
+<text x="56" y="104" font-size="10" class="fg2">amount</text>
+<text x="200" y="104" font-size="10" class="fg">10,000.00 PLN</text>
+<text x="56" y="124" font-size="10" class="fg2">currency</text>
+<text x="200" y="124" font-size="10" class="fg">PLN</text>
+<text x="56" y="144" font-size="10" class="fg2">payment rail</text>
+<text x="200" y="144" font-size="10" class="fg">SEPA</text>
+<text x="56" y="164" font-size="10" class="fg2">counterparty type</text>
+<text x="200" y="164" font-size="10" class="fg">BANK_ACCOUNT</text>
+<text x="56" y="184" font-size="10" class="fg2">src risk score</text>
+<text x="200" y="184" font-size="10" class="fg">34</text>
+<text x="56" y="204" font-size="10" class="fg2">dst risk score</text>
+<text x="200" y="204" font-size="10" class="fg">12</text>
+<text x="56" y="224" font-size="10" class="fg2">recent (1h)</text>
+<text x="200" y="224" font-size="10" class="fg">2</text>
+<text x="56" y="244" font-size="10" class="fg2">src restricted</text>
+<text x="200" y="244" font-size="10" class="fg">false</text>
+<text x="56" y="264" font-size="10" class="fg2">dst restricted</text>
+<text x="200" y="264" font-size="10" class="fg">false</text>
+<text x="56" y="284" font-size="10" class="fg2">target wallet</text>
+<text x="200" y="284" font-size="10" class="fg">null</text>
+
+<line x1="320" y1="180" x2="360" y2="180" class="line" marker-end="url(#a)"/>
+<text x="340" y="174" text-anchor="middle" font-size="8" class="fg3">match</text>
+
+<rect x="360" y="60" width="280" height="240" rx="3" class="dashed"/>
+<text x="376" y="78" font-size="9" class="fg3" letter-spacing="0.5">decision rules (stored in db)</text>
+
+<rect x="376" y="90" width="248" height="40" rx="2" class="box"/>
+<text x="384" y="106" font-size="9" class="fg">rule: amount &gt;= 10000 AND currency = PLN</text>
+<text x="384" y="122" font-size="9" class="fg2">→ FLAG · enhanced review threshold</text>
+
+<rect x="376" y="140" width="248" height="40" rx="2" class="box"/>
+<text x="384" y="156" font-size="9" class="fg">rule: src_restricted = true</text>
+<text x="384" y="172" font-size="9" class="fg2">→ BLOCK · sanctions screening</text>
+
+<rect x="376" y="190" width="248" height="40" rx="2" class="box"/>
+<text x="384" y="206" font-size="9" class="fg">rule: recent_transfers_last_hour &gt;= 5</text>
+<text x="384" y="222" font-size="9" class="fg2">→ FLAG · velocity pattern</text>
+
+<rect x="376" y="240" width="248" height="40" rx="2" class="box"/>
+<text x="384" y="256" font-size="9" class="fg">rule: dst_risk_score &gt;= 80</text>
+<text x="384" y="272" font-size="9" class="fg2">→ BLOCK · high risk counterparty</text>
+
+<text x="340" y="330" text-anchor="middle" font-size="9" class="fg3">every rule that matches contributes one evaluation · highest severity becomes the final decision</text>
+</svg>
