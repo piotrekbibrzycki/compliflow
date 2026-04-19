@@ -171,3 +171,7 @@ Every `transfer-service` endpoint (except health) requires a JWT from `account-s
 - web3j for blockchain interaction
 - Solidity 0.8.24 for the anchor contract
 - Docker Compose
+
+ ## License
+
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
