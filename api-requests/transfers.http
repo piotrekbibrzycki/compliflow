@@ -1,4 +1,84 @@
-@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBjb21wbGlmbG93LmxvY2FsIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc2NTQ5ODI3LCJleHAiOjE3NzY1NTM0Mjd9.RvCL5YG6UrNFmJHXVKa_NpDSpZvwVfTwTIRqaG-C0C8
+@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBjb21wbGlmbG93LmxvY2FsIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc2NTU2NjkxLCJleHAiOjE3NzY1NjAyOTF9.dQ6EBhkFAqQcYH1Gqfm1ZJv6hq1IK8qWbqp8jtAUiwM"
+
+
+###
+POST http://127.0.0.1:8081/api/accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "accountNumber": "PL001DEMO0000000000000000000001",
+  "ownerName": "Demo Sender Main",
+  "balance": 50000.00,
+  "currency": "PLN"
+}
+
+###
+POST http://127.0.0.1:8081/api/accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "accountNumber": "PL001DEMO0000000000000000000002",
+  "ownerName": "Demo Receiver Normal",
+  "balance": 3000.00,
+  "currency": "PLN"
+}
+
+###
+POST http://127.0.0.1:8081/api/accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "accountNumber": "PL001DEMO0000000000000000000003",
+  "ownerName": "Demo Restricted Beneficiary",
+  "balance": 1000.00,
+  "currency": "PLN"
+}
+
+###
+POST http://127.0.0.1:8082/api/restricted-parties
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "matchType": "ACCOUNT_NUMBER",
+  "matchValue": "PL001DEMO0000000000000000000003",
+  "entityName": "Restricted Demo Beneficiary",
+  "source": "DEMO_SANCTIONS_LIST",
+  "sourceReference": "DEMO-001"
+}
+
+###
+POST http://127.0.0.1:8082/api/transfers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "fromAccount": "PL001DEMO0000000000000000000001",
+  "toAccount": "PL001DEMO0000000000000000000002",
+  "amount": 500.00,
+  "title": "Demo pass transfer",
+  "currency": "PLN",
+  "paymentRail": "SEPA",
+  "counterpartyType": "BANK_ACCOUNT"
+}
+
+###
+POST http://127.0.0.1:8082/api/transfers
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "fromAccount": "PL001DEMO0000000000000000000001",
+  "toAccount": "PL001DEMO0000000000000000000002",
+  "amount": 15000.00,
+  "title": "Demo flagged transfer",
+  "currency": "PLN",
+  "paymentRail": "SEPA",
+  "counterpartyType": "BANK_ACCOUNT"
+}
 
 ###
 POST http://127.0.0.1:8082/api/transfers

@@ -1,13 +1,14 @@
-### Anchor blockchain proof for a finalized transfer
-POST http://localhost:8082/api/transfers/1/proof/anchor
-Authorization: Bearer {{token}}
+@accountHost = http://localhost:8081
+@transferHost = http://localhost:8082
 
-### Read stored/computed transfer proof
-GET http://localhost:8082/api/transfers/1/proof
-Authorization: Bearer {{token}}
+@adminEmail = admin@compliflow.local
+@adminPassword = secret123
 
-### Verify current payload against stored hash and on-chain registry
-GET http://localhost:8082/api/transfers/1/proof/verify
-Authorization: Bearer {{token}}
+### LOGIN
+POST {{accountHost}}/api/auth/login
+Content-Type: application/json
 
-eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBjb21wbGlmbG93LmxvY2FsIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzc2NTMxNzk5LCJleHAiOjE3NzY1MzUzOTl9.fzZJeapxRea9TOiUpHU82eSCnj0Swhinv-R_ABWDrGY
+{
+  "email": "{{adminEmail}}",
+  "password": "{{adminPassword}}"
+}
