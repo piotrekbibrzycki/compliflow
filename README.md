@@ -121,49 +121,8 @@ Rebuild the payload from the database, hash it again, and compare. If the hash s
 
 The payload and personal data stay off-chain. Only the 32-byte hash, the transfer ID, and the schema version go on-chain.
 
-## API
 
-### account-service
-
-- `POST /api/auth/register`
-- `POST /api/auth/login`
-
-- `GET /api/accounts`
-- `GET /api/accounts/{id}`
-- `GET /api/accounts/number/{accountNumber}`
-- `POST /api/accounts`
-- `PATCH /api/accounts/{id}/balance`
-
-### transfer-service
-
-- `POST /api/transfers`
-- `GET /api/transfers`
-- `GET /api/transfers/{id}`
-- `GET /api/transfers/{id}/explanation`
-- `GET /api/transfers/account/{accountNumber}`
-- `GET /api/transfers/status/{status}`
-- `GET /api/transfers/pending-review`
-- `PATCH /api/transfers/{id}/review`
-
-- `POST /api/transfers/{id}/proof/anchor`
-- `GET /api/transfers/{id}/proof`
-- `GET /api/transfers/{id}/proof/verify`
-
-- `GET /api/compliance/decision-tables`
-- `GET /api/compliance/decision-rules`
-
-- `POST /api/restricted-parties`
-- `GET /api/restricted-parties`
-- `PATCH /api/restricted-parties/{id}/deactivate`
-- `DELETE /api/restricted-parties/{id}`
-
-- `GET /api/audit-events`
-- `GET /api/dashboard/summary`
-- `GET /api/reporting/compliance-summary`
-
-Every `transfer-service` endpoint (except health) requires a JWT from `account-service` in the `Authorization: Bearer <token>` header.
-
-## Tech stack
+## tech stack
 
 - Java 21 + Spring Boot 3
 - PostgreSQL 15 with Flyway
@@ -172,6 +131,6 @@ Every `transfer-service` endpoint (except health) requires a JWT from `account-s
 - Solidity 0.8.24 for the anchor contract
 - Docker Compose
 
- ## License
+ ## license
 
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
