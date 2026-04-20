@@ -1,4 +1,4 @@
-### compliflow 🏆 2nd Place at ETHSilesia 2026
+### compliflow 
 
 ## description
 
