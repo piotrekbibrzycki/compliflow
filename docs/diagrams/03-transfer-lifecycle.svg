@@ -1,4 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="680" viewBox="0 0 680 360">
+Masz rację. Tu najlepiej całkowicie wyrzucić ukośne i łamane strzałki między kafelkami. Zrobimy to jako czysty układ kolumnowy: decyzja u góry, trzy ścieżki w kolumnach, bez przecinania boxów.
+
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" width="680" viewBox="0 0 680 340">
 <style>
   :root {
     --bg: #ffffff;
@@ -21,63 +24,51 @@
   </marker>
 </defs>
 
-<rect width="680" height="360" fill="var(--bg)"/>
+<rect width="680" height="340" fill="var(--bg)"/>
 
-<text x="40" y="32" font-size="8.8" fill="var(--fg3)" letter-spacing="0.5">decision table · data-driven rules evaluated for each transfer</text>
-<line x1="40" y1="42" x2="640" y2="42" stroke="var(--line)" stroke-width="0.7"/>
+<text x="44" y="32" font-size="8.8" fill="var(--fg3)" letter-spacing="0.5">transfer lifecycle</text>
+<line x1="44" y1="42" x2="636" y2="42" stroke="var(--line)" stroke-width="0.7"/>
 
-<rect x="48" y="64" width="270" height="230" rx="4" fill="none" stroke="var(--line)" stroke-width="0.7" stroke-dasharray="4 3"/>
-<text x="64" y="82" font-size="9" fill="var(--fg3)" letter-spacing="0.5">transfer context</text>
+<rect x="260" y="64" width="160" height="38" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
+<text x="340" y="84" text-anchor="middle" dominant-baseline="central" font-size="10.5" fill="var(--fg)">compliance decision</text>
 
-<text x="68" y="108" font-size="9.2" fill="var(--fg2)">amount</text>
-<text x="198" y="108" font-size="9.2" fill="var(--fg)">10,000.00 PLN</text>
+<rect x="74" y="142" width="150" height="44" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
+<text x="149" y="160" text-anchor="middle" dominant-baseline="central" font-size="9.8" fill="var(--fg)">PENDING</text>
+<text x="149" y="175" text-anchor="middle" dominant-baseline="central" font-size="8.2" fill="var(--fg3)">PASS</text>
 
-<text x="68" y="128" font-size="9.2" fill="var(--fg2)">currency</text>
-<text x="198" y="128" font-size="9.2" fill="var(--fg)">PLN</text>
+<rect x="265" y="142" width="150" height="44" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
+<text x="340" y="160" text-anchor="middle" dominant-baseline="central" font-size="9.8" fill="var(--fg)">PENDING_REVIEW</text>
+<text x="340" y="175" text-anchor="middle" dominant-baseline="central" font-size="8.2" fill="var(--fg3)">FLAG</text>
 
-<text x="68" y="148" font-size="9.2" fill="var(--fg2)">payment rail</text>
-<text x="198" y="148" font-size="9.2" fill="var(--fg)">SEPA</text>
+<rect x="456" y="142" width="150" height="44" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
+<text x="531" y="160" text-anchor="middle" dominant-baseline="central" font-size="9.8" fill="var(--fg)">BLOCKED</text>
+<text x="531" y="175" text-anchor="middle" dominant-baseline="central" font-size="8.2" fill="var(--fg3)">BLOCK</text>
 
-<text x="68" y="168" font-size="9.2" fill="var(--fg2)">counterparty</text>
-<text x="198" y="168" font-size="9.2" fill="var(--fg)">BANK_ACCOUNT</text>
+<line x1="340" y1="102" x2="340" y2="122" stroke="var(--line)" stroke-width="0.8"/>
+<line x1="149" y1="122" x2="531" y2="122" stroke="var(--line)" stroke-width="0.8"/>
+<line x1="149" y1="122" x2="149" y2="142" stroke="var(--line)" stroke-width="0.8" marker-end="url(#a)"/>
+<line x1="340" y1="122" x2="340" y2="142" stroke="var(--line)" stroke-width="0.8" marker-end="url(#a)"/>
+<line x1="531" y1="122" x2="531" y2="142" stroke="var(--line)" stroke-width="0.8" marker-end="url(#a)"/>
 
-<text x="68" y="188" font-size="9.2" fill="var(--fg2)">src risk score</text>
-<text x="198" y="188" font-size="9.2" fill="var(--fg)">34</text>
+<rect x="74" y="248" width="150" height="42" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
+<text x="149" y="270" text-anchor="middle" dominant-baseline="central" font-size="9.8" fill="var(--fg)">COMPLETED</text>
 
-<text x="68" y="208" font-size="9.2" fill="var(--fg2)">dst risk score</text>
-<text x="198" y="208" font-size="9.2" fill="var(--fg)">12</text>
+<rect x="265" y="248" width="150" height="42" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
+<text x="340" y="270" text-anchor="middle" dominant-baseline="central" font-size="9.8" fill="var(--fg)">REJECTED</text>
 
-<text x="68" y="228" font-size="9.2" fill="var(--fg2)">recent 1h</text>
-<text x="198" y="228" font-size="9.2" fill="var(--fg)">2</text>
+<rect x="456" y="248" width="150" height="42" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
+<text x="531" y="270" text-anchor="middle" dominant-baseline="central" font-size="9.8" fill="var(--fg)">NO MOVEMENT</text>
 
-<text x="68" y="248" font-size="9.2" fill="var(--fg2)">restricted</text>
-<text x="198" y="248" font-size="9.2" fill="var(--fg)">false / false</text>
+<line x1="149" y1="186" x2="149" y2="248" stroke="var(--line)" stroke-width="0.8" marker-end="url(#a)"/>
+<text x="163" y="219" font-size="8.2" fill="var(--fg3)">execute ok</text>
 
-<text x="68" y="268" font-size="9.2" fill="var(--fg2)">target wallet</text>
-<text x="198" y="268" font-size="9.2" fill="var(--fg)">null</text>
+<line x1="340" y1="186" x2="340" y2="248" stroke="var(--line)" stroke-width="0.8" marker-end="url(#a)"/>
+<text x="354" y="219" font-size="8.2" fill="var(--fg3)">review reject</text>
 
-<line x1="318" y1="178" x2="362" y2="178" stroke="var(--line)" stroke-width="0.8" marker-end="url(#a)"/>
-<text x="340" y="166" text-anchor="middle" font-size="8.3" fill="var(--fg3)">match</text>
+<line x1="531" y1="186" x2="531" y2="248" stroke="var(--line)" stroke-width="0.8" marker-end="url(#a)"/>
+<text x="545" y="219" font-size="8.2" fill="var(--fg3)">terminal</text>
 
-<rect x="362" y="64" width="270" height="230" rx="4" fill="none" stroke="var(--line)" stroke-width="0.7" stroke-dasharray="4 3"/>
-<text x="378" y="82" font-size="9" fill="var(--fg3)" letter-spacing="0.5">decision rules stored in db</text>
-
-<rect x="382" y="100" width="230" height="34" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
-<text x="394" y="114" font-size="8.3" fill="var(--fg)">amount &gt;= 10000 AND currency = PLN</text>
-<text x="394" y="128" font-size="8.3" fill="var(--fg2)">→ FLAG · enhanced review</text>
-
-<rect x="382" y="144" width="230" height="34" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
-<text x="394" y="158" font-size="8.3" fill="var(--fg)">src_restricted = true</text>
-<text x="394" y="172" font-size="8.3" fill="var(--fg2)">→ BLOCK · sanctions screening</text>
-
-<rect x="382" y="188" width="230" height="34" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
-<text x="394" y="202" font-size="8.3" fill="var(--fg)">recent_transfers_last_hour &gt;= 5</text>
-<text x="394" y="216" font-size="8.3" fill="var(--fg2)">→ FLAG · velocity pattern</text>
-
-<rect x="382" y="232" width="230" height="34" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
-<text x="394" y="246" font-size="8.3" fill="var(--fg)">dst_risk_score &gt;= 80</text>
-<text x="394" y="260" font-size="8.3" fill="var(--fg2)">→ BLOCK · high risk counterparty</text>
-
-<text x="340" y="326" text-anchor="middle" font-size="8.8" fill="var(--fg3)">matching rules create evaluations · highest severity becomes the final decision</text>
+<text x="340" y="318" text-anchor="middle" font-size="8.8" fill="var(--fg3)">simplified view: failed execution and approved review also lead to terminal states</text>
 
 </svg>
+```
