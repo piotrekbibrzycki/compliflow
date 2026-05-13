@@ -122,12 +122,7 @@ The payload and personal data stay off-chain. Only the 32-byte hash, the transfe
 
 ## tech stack
 
-- Java 21 + Spring Boot 3
-- PostgreSQL 15 with Flyway
-- Spring Security + JWT
-- web3j for blockchain interaction
-- Solidity 0.8.24 for the anchor contract
-- Docker Compose
+[![My Stack](https://skillicons.dev/icons?i=java,spring,postgres,docker,solidity&theme=light)](https://skillicons.dev)
 
  ## license
 
