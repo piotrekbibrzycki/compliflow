@@ -1,105 +1,75 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 830 480" width="100%" height="100%">
-    <defs>
-        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M 0 1 L 8 5 L 0 9 z" fill="#888"/>
-        </marker>
-    </defs>
-    <style>
-        text {
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            font-size: 13px;
-            fill: #333333;
-        }
-        .subtext {
-            font-size: 12px;
-            fill: #888888;
-        }
-        .title {
-            font-size: 11px;
-            fill: #999999;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .box {
-            fill: #ffffff;
-            stroke: #666666;
-            stroke-width: 1.2;
-            rx: 4;
-        }
-        .line {
-            stroke: #888888;
-            stroke-width: 1.2;
-            fill: none;
-        }
-        .divider {
-            stroke: #cccccc;
-            stroke-width: 1.5;
-            stroke-dasharray: 3, 5;
-        }
-        .inner-line {
-            stroke: #e0e0e0;
-            stroke-width: 1.2;
-        }
-    </style>
+<svg xmlns="http://www.w3.org/2000/svg" width="680" viewBox="0 0 680 360">
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1a1a1a;
+    --fg2: #6b6b6b;
+    --fg3: #999999;
+    --line: #cccccc;
+    --box-bg: #fafafa;
+    --box-stroke: #d4d4d4;
+  }
 
-    <text x="50" y="40" class="title">audit proof · v1</text>
-    <text x="780" y="40" class="title" text-anchor="end">keccak256 · web3j · solidity</text>
+  text {
+    font-family: "SF Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
+  }
+</style>
 
-    <text x="50" y="90" class="title">canonical</text>
-    <text x="250" y="90" class="title">hash</text>
-    <text x="430" y="90" class="title">anchor</text>
-    <text x="650" y="90" class="title">store</text>
+<defs>
+  <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+    <path d="M2 2L8 5L2 8" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
 
-    <rect x="50" y="100" width="160" height="130" class="box"/>
-    <text x="130" y="125" text-anchor="middle" font-weight="500">transfer</text>
-    <line x1="65" y1="135" x2="195" y2="135" class="inner-line"/>
-    <text x="65" y="160" class="subtext">+ audit events</text>
-    <text x="65" y="180" class="subtext">+ decision</text>
-    <text x="65" y="200" class="subtext">→ sorted json</text>
+<rect width="680" height="360" fill="var(--bg)"/>
 
-    <path d="M 210 165 L 242 165" class="line" marker-end="url(#arrow)"/>
+<text x="40" y="32" font-size="8.8" fill="var(--fg3)" letter-spacing="0.5">audit proof · canonical payload, keccak256 hash, on-chain anchoring</text>
+<line x1="40" y1="42" x2="640" y2="42" stroke="var(--line)" stroke-width="0.7"/>
 
-    <rect x="250" y="100" width="140" height="130" class="box"/>
-    <text x="320" y="125" text-anchor="middle" font-weight="500">keccak256</text>
-    <line x1="265" y1="135" x2="375" y2="135" class="inner-line"/>
-    <text x="320" y="170" text-anchor="middle" class="subtext">32 bytes</text>
+<rect x="52" y="86" width="120" height="64" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
+<text x="112" y="107" text-anchor="middle" dominant-baseline="central" font-size="9.8" fill="var(--fg)">canonical</text>
+<text x="112" y="123" text-anchor="middle" dominant-baseline="central" font-size="8.2" fill="var(--fg3)">transfer + audit</text>
+<text x="112" y="137" text-anchor="middle" dominant-baseline="central" font-size="8.2" fill="var(--fg3)">sorted JSON</text>
 
-    <path d="M 390 165 L 422 165" class="line" marker-end="url(#arrow)"/>
+<line x1="172" y1="118" x2="218" y2="118" stroke="var(--line)" stroke-width="0.8" marker-end="url(#a)"/>
 
-    <rect x="430" y="100" width="180" height="130" class="box"/>
-    <text x="520" y="125" text-anchor="middle" font-weight="500">on-chain tx</text>
-    <line x1="445" y1="135" x2="595" y2="135" class="inner-line"/>
-    <text x="520" y="170" text-anchor="middle" class="subtext">anchorAuditProof</text>
-    <text x="520" y="190" text-anchor="middle" class="subtext">(bytes32, uint256)</text>
+<rect x="218" y="86" width="110" height="64" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
+<text x="273" y="107" text-anchor="middle" dominant-baseline="central" font-size="9.8" fill="var(--fg)">keccak256</text>
+<text x="273" y="126" text-anchor="middle" dominant-baseline="central" font-size="8.2" fill="var(--fg3)">32-byte hash</text>
 
-    <path d="M 610 165 L 642 165" class="line" marker-end="url(#arrow)"/>
+<line x1="328" y1="118" x2="374" y2="118" stroke="var(--line)" stroke-width="0.8" marker-end="url(#a)"/>
 
-    <rect x="650" y="100" width="130" height="130" class="box"/>
-    <text x="715" y="125" text-anchor="middle" font-weight="500">txHash</text>
-    <line x1="665" y1="135" x2="765" y2="135" class="inner-line"/>
-    <text x="715" y="170" text-anchor="middle" class="subtext">→ audit</text>
+<rect x="374" y="86" width="130" height="64" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
+<text x="439" y="107" text-anchor="middle" dominant-baseline="central" font-size="9.8" fill="var(--fg)">on-chain tx</text>
+<text x="439" y="123" text-anchor="middle" dominant-baseline="central" font-size="8.2" fill="var(--fg3)">anchorAuditProof</text>
+<text x="439" y="137" text-anchor="middle" dominant-baseline="central" font-size="8.2" fill="var(--fg3)">bytes32 proof</text>
 
-    <line x1="50" y1="265" x2="780" y2="265" class="divider"/>
+<line x1="504" y1="118" x2="550" y2="118" stroke="var(--line)" stroke-width="0.8" marker-end="url(#a)"/>
 
-    <text x="50" y="300" class="title">verify</text>
-    <rect x="50" y="310" width="730" height="100" class="box"/>
+<rect x="550" y="86" width="88" height="64" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
+<text x="594" y="107" text-anchor="middle" dominant-baseline="central" font-size="9.8" fill="var(--fg)">txHash</text>
+<text x="594" y="126" text-anchor="middle" dominant-baseline="central" font-size="8.2" fill="var(--fg3)">stored</text>
 
-    <text x="167.5" y="345" text-anchor="middle" font-weight="500">rebuild payload from db</text>
-    <line x1="70" y1="355" x2="265" y2="355" class="inner-line"/>
-    <text x="167.5" y="380" text-anchor="middle" class="subtext">match stored hash ✓</text>
+<line x1="40" y1="192" x2="640" y2="192" stroke="var(--line)" stroke-width="0.7" stroke-dasharray="4 3"/>
 
-    <path d="M 280 355 L 322 355" class="line" marker-end="url(#arrow)"/>
+<text x="40" y="224" font-size="8.8" fill="var(--fg3)" letter-spacing="0.5">verification</text>
 
-    <text x="417.5" y="345" text-anchor="middle" font-weight="500">recompute hash</text>
-    <line x1="340" y1="355" x2="495" y2="355" class="inner-line"/>
-    <text x="417.5" y="380" text-anchor="middle" class="subtext">match contract state ✓</text>
+<rect x="72" y="246" width="150" height="50" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
+<text x="147" y="266" text-anchor="middle" dominant-baseline="central" font-size="9.2" fill="var(--fg)">rebuild payload</text>
+<text x="147" y="282" text-anchor="middle" dominant-baseline="central" font-size="8.1" fill="var(--fg3)">from database</text>
 
-    <path d="M 510 355 L 552 355" class="line" marker-end="url(#arrow)"/>
+<line x1="222" y1="271" x2="266" y2="271" stroke="var(--line)" stroke-width="0.8" marker-end="url(#a)"/>
 
-    <text x="665" y="345" text-anchor="middle" font-weight="500">isProofAnchored()</text>
-    <line x1="570" y1="355" x2="760" y2="355" class="inner-line"/>
-    <text x="665" y="380" text-anchor="middle" class="subtext">tamper-evident ✓</text>
+<rect x="266" y="246" width="150" height="50" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
+<text x="341" y="266" text-anchor="middle" dominant-baseline="central" font-size="9.2" fill="var(--fg)">recompute hash</text>
+<text x="341" y="282" text-anchor="middle" dominant-baseline="central" font-size="8.1" fill="var(--fg3)">same canonical rules</text>
 
-    <text x="50" y="450" class="subtext">if any hash differs → trail was modified after anchoring</text>
+<line x1="416" y1="271" x2="460" y2="271" stroke="var(--line)" stroke-width="0.8" marker-end="url(#a)"/>
+
+<rect x="460" y="246" width="150" height="50" rx="3" fill="var(--box-bg)" stroke="var(--box-stroke)" stroke-width="0.7"/>
+<text x="535" y="266" text-anchor="middle" dominant-baseline="central" font-size="9.2" fill="var(--fg)">compare on-chain</text>
+<text x="535" y="282" text-anchor="middle" dominant-baseline="central" font-size="8.1" fill="var(--fg3)">tamper-evident</text>
+
+<text x="340" y="330" text-anchor="middle" font-size="8.8" fill="var(--fg3)">if the hash differs, the audit trail was modified after anchoring</text>
 
 </svg>
