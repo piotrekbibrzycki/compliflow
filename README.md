@@ -1,8 +1,11 @@
+> This project was originally built during the ETHSilesia 2026 hackathon.  
+> After the hackathon, only the README was updated for clarity.
+
 ### compliflow 
 
 ## description
 
-CompliFlow is a compliance-first payment system. The rule is simple: funds do not move until compliance makes a decision.
+CompliFlow is a compliance-first payment system. 
 
 Every transfer goes through a rule engine that returns one of three outcomes: `PASS`, `FLAG`, or `BLOCK`. Every rule decision is saved as an audit event. When the transfer reaches a final state, the audit trail can be hashed and anchored on a blockchain so it cannot be silently modified later.
 
