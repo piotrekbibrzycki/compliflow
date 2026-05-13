@@ -72,8 +72,6 @@ CompliFlow checks every transfer against a restricted-party list. Three match ty
 
 Entries can be deactivated without deleting them, so history is preserved.
 
-![Restricted-party screening](docs/diagrams/07-restricted-screening.svg)
-
 On every transfer, the source account, destination account, and target wallet are checked. Any match sets a flag on the transfer context, and the compliance engine turns that flag into a `BLOCK` decision.
 
 ## audit events
